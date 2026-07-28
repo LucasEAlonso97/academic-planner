@@ -1,75 +1,52 @@
-# React + TypeScript + Vite
+# Planificador Académico
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web para organizar el progreso académico, consultar correlativas, visualizar materias disponibles y simular diferentes recorridos dentro del plan de estudios.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Registro del estado de cada materia.
+- Validación automática de correlativas.
+- Visualización de materias disponibles y bloqueadas.
+- Progreso general y por año.
+- Simulación de escenarios académicos.
+- Planificación del próximo cuatrimestre.
+- Búsqueda y filtros de materias.
+- Exportación e importación del progreso mediante PDF.
+- Guardado automático en el navegador.
+- Instalación como aplicación PWA.
+- Diseño adaptable a celulares y computadoras.
 
-## React Compiler
+## Tecnologías utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Zustand
+- jsPDF
+- pdf-lib
+- vite-plugin-pwa
 
-## Expanding the ESLint configuration
+## Instalación local
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+git clone URL_DEL_REPOSITORIO
+cd uai-planner
+npm install
+npm run dev
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Demo
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+La aplicación se encuentra publicada en:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+https://uai-planner.netlify.app/
 
-```
+Aclaración
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Este proyecto es una herramienta independiente y no oficial.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+No está afiliado, respaldado ni administrado por la Universidad Abierta Interamericana. La información académica debe verificarse siempre mediante los canales oficiales de la universidad.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Autor
 
-```
+Desarrollado por Lucas Ezequiel Alonso.
