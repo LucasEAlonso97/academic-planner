@@ -1,0 +1,459 @@
+{
+  "career": {
+    "id": "analista-sistemas",
+    "name": "Tecnicatura Superior en Análisis de Sistemas Informáticos",
+    "plan": "VCO-19",
+    "years": 3,
+    "totalSubjects": 32
+  },
+  "subjects": [
+    {
+      "id": "programacion-estructurada",
+      "code": 1,
+      "name": "Programación Estructurada",
+      "year": 1,
+      "semester": 1,
+      "hours": 90,
+      "prerequisites": []
+    },
+    {
+      "id": "sistemas-computacion-1",
+      "code": 2,
+      "name": "Sistemas de Computación I",
+      "year": 1,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "laboratorio-calculo",
+      "code": 3,
+      "name": "Laboratorio de Cálculo",
+      "year": 1,
+      "semester": 1,
+      "hours": 96,
+      "prerequisites": []
+    },
+    {
+      "id": "problematica-mundo-actual",
+      "code": 4,
+      "name": "Problemática del Mundo Actual",
+      "year": 1,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "ingles-1",
+      "code": 5,
+      "name": "Inglés I",
+      "year": 1,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "sistemas-computacion-2",
+      "code": 6,
+      "name": "Sistemas de Computación II",
+      "year": 1,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": ["sistemas-computacion-1"]
+    },
+    {
+      "id": "calculo-infinitesimal-1",
+      "code": 7,
+      "name": "Cálculo Infinitesimal I",
+      "year": 1,
+      "semester": 2,
+      "hours": 90,
+      "prerequisites": ["laboratorio-calculo"]
+    },
+    {
+      "id": "historia-ciencia-tecnica",
+      "code": 8,
+      "name": "Historia de la Ciencia y de la Técnica",
+      "year": 1,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": ["problematica-mundo-actual"]
+    },
+    {
+      "id": "ingles-2",
+      "code": 9,
+      "name": "Inglés II",
+      "year": 1,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": ["ingles-1"]
+    },
+    {
+      "id": "programacion-1",
+      "code": 10,
+      "name": "Programación I",
+      "year": 1,
+      "semester": 2,
+      "hours": 106,
+      "prerequisites": ["programacion-estructurada"]
+    },
+    {
+      "id": "programacion-orientada-objetos",
+      "code": 11,
+      "name": "Programación Orientada a Objetos",
+      "year": 2,
+      "semester": 1,
+      "hours": 106,
+      "prerequisites": ["programacion-1"]
+    },
+    {
+      "id": "metodologia-desarrollo-sistemas-1",
+      "code": 12,
+      "name": "Metodología de Desarrollo de Sistemas I",
+      "year": 2,
+      "semester": 1,
+      "hours": 106,
+      "prerequisites": []
+    },
+    {
+      "id": "calculo-infinitesimal-2",
+      "code": 13,
+      "name": "Cálculo Infinitesimal II",
+      "year": 2,
+      "semester": 1,
+      "hours": 90,
+      "prerequisites": ["calculo-infinitesimal-1"]
+    },
+    {
+      "id": "ingles-3",
+      "code": 14,
+      "name": "Inglés III",
+      "year": 2,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": ["ingles-2"]
+    },
+    {
+      "id": "arquitectura-sistemas-operativos",
+      "code": 18,
+      "name": "Arquitectura de Sistemas Operativos",
+      "year": 2,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": ["sistemas-computacion-2"]
+    },
+    {
+      "id": "analisis-procesos-administrativos",
+      "code": 25,
+      "name": "Análisis de Procesos Administrativos",
+      "year": 2,
+      "semester": 1,
+      "hours": 58,
+      "prerequisites": []
+    },
+    {
+      "id": "probabilidad-estadistica",
+      "code": 19,
+      "name": "Probabilidad y Estadística",
+      "year": 2,
+      "semester": 2,
+      "hours": 90,
+      "prerequisites": ["calculo-infinitesimal-2"]
+    },
+    {
+      "id": "ingles-4",
+      "code": 20,
+      "name": "Inglés IV",
+      "year": 2,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": ["ingles-3"]
+    },
+    {
+      "id": "lenguaje-ultima-generacion",
+      "code": 21,
+      "name": "Lenguaje de Última Generación",
+      "year": 2,
+      "semester": 2,
+      "hours": 106,
+      "prerequisites": ["programacion-orientada-objetos"]
+    },
+    {
+      "id": "fisica-1",
+      "code": 22,
+      "name": "Física I",
+      "year": 2,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "quimica",
+      "code": 16,
+      "name": "Química",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "metodologia-desarrollo-sistemas-2",
+      "code": 17,
+      "name": "Metodología de Desarrollo de Sistemas II",
+      "year": 2,
+      "semester": 2,
+      "hours": 106,
+      "prerequisites": ["metodologia-desarrollo-sistemas-1"]
+    },
+    {
+      "id": "etica-deontologia-profesional",
+      "code": 33,
+      "name": "Ética y Deontología Profesional",
+      "year": 3,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1"
+      ]
+    },
+    {
+      "id": "sistema-representacion",
+      "code": 34,
+      "name": "Sistema de Representación",
+      "year": 3,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1"
+      ]
+    },
+    {
+      "id": "base-datos",
+      "code": 23,
+      "name": "Base de Datos",
+      "year": 3,
+      "semester": 1,
+      "hours": 106,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "metodologia-desarrollo-sistemas-1"
+      ]
+    },
+    {
+      "id": "tecnologia-comunicaciones",
+      "code": 24,
+      "name": "Tecnología de las Comunicaciones",
+      "year": 3,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "arquitectura-sistemas-operativos"
+      ]
+    },
+    {
+      "id": "observacion-practica-profesional",
+      "code": 26,
+      "name": "Observación y Práctica Profesional",
+      "year": 3,
+      "semester": 1,
+      "hours": 110,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "metodologia-desarrollo-sistemas-2",
+        "lenguaje-ultima-generacion"
+      ]
+    },
+    {
+      "id": "fisica-2",
+      "code": 27,
+      "name": "Física II",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "fisica-1"
+      ]
+    },
+    {
+      "id": "teleinformatica-comunicaciones",
+      "code": 28,
+      "name": "Teleinformática y Comunicaciones",
+      "year": 3,
+      "semester": 2,
+      "hours": 106,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "tecnologia-comunicaciones"
+      ]
+    },
+    {
+      "id": "trabajo-final-integrador",
+      "code": 29,
+      "name": "Trabajo Final Integrador",
+      "year": 3,
+      "semester": 2,
+      "hours": 110,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "observacion-practica-profesional"
+      ]
+    },
+    {
+      "id": "base-datos-aplicada-1",
+      "code": 30,
+      "name": "Base de Datos Aplicada I",
+      "year": 3,
+      "semester": 2,
+      "hours": 42,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "base-datos"
+      ]
+    },
+    {
+      "id": "base-datos-aplicada-2",
+      "code": 31,
+      "name": "Base de Datos Aplicada II",
+      "year": 3,
+      "semester": 2,
+      "hours": 42,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "base-datos"
+      ]
+    },
+    {
+      "id": "matematica-discreta-automatas",
+      "code": 32,
+      "name": "Matemática Discreta y Autómatas",
+      "year": 3,
+      "semester": 2,
+      "hours": 74,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1",
+        "probabilidad-estadistica"
+      ]
+    },
+    {
+      "id": "programacion-2",
+      "code": 15,
+      "name": "Programación II",
+      "year": 3,
+      "semester": 2,
+      "hours": 74,
+      "prerequisites": [
+        "programacion-estructurada",
+        "sistemas-computacion-1",
+        "laboratorio-calculo",
+        "problematica-mundo-actual",
+        "ingles-1",
+        "sistemas-computacion-2",
+        "calculo-infinitesimal-1",
+        "historia-ciencia-tecnica",
+        "ingles-2",
+        "programacion-1"
+      ]
+    }
+  ]
+}
