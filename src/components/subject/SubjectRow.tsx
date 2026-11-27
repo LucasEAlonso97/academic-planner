@@ -201,8 +201,7 @@ export default function SubjectRow({
             />
           )}
 
-          <label className="relative block">
-            <span className="sr-only">Estado de {subject.name}</span>
+          <div className="relative">
 
             <span
               aria-hidden="true"
@@ -210,6 +209,7 @@ export default function SubjectRow({
             />
 
             <select
+              aria-label={`Estado de ${subject.name} (código ${subject.code})`}
               value={selectValue}
               onChange={(event) => handleSelect(event.target.value as SelectValue)}
               className={`h-9 w-[124px] cursor-pointer appearance-none rounded-full border py-0 pl-7 pr-7 text-[13px] font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[#7B1730]/40 sm:w-[160px] ${style.pill}`}
@@ -228,7 +228,7 @@ export default function SubjectRow({
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-70">
               <path d="m6 9 6 6 6-6" />
             </svg>
-          </label>
+          </div>
 
           <button
             type="button"

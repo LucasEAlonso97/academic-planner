@@ -33,29 +33,27 @@ export default function GradeInput({ subjectName, grade, onChange }: GradeInputP
   };
 
   return (
-    <label className="relative block">
-      <span className="sr-only">Nota de {subjectName}</span>
-      <input
-        type="text"
-        inputMode="decimal"
-        autoComplete="off"
-        placeholder="Nota"
-        value={text}
-        aria-invalid={isInvalid}
-        title={isInvalid ? `La nota tiene que estar entre ${MIN_GRADE} y ${MAX_GRADE}` : undefined}
-        onChange={(event) => setText(event.target.value)}
-        onBlur={commit}
-        onKeyDown={(event) => {
-          if (event.key === "Enter") {
-            event.currentTarget.blur();
-          }
-        }}
-        className={`h-9 w-[60px] rounded-lg border bg-white px-2 text-center text-[13px] font-semibold tabular-nums text-zinc-900 outline-none transition placeholder:font-medium placeholder:text-zinc-400 focus:ring-2 ${
-          isInvalid
-            ? "border-red-400 focus:ring-red-200"
-            : "border-zinc-200 focus:border-[#7B1730] focus:ring-[#7B1730]/15"
-        }`}
+    <input
+      aria-label={`Nota de ${subjectName}`}
+      type="text"
+      inputMode="decimal"
+      autoComplete="off"
+      placeholder="Nota"
+      value={text}
+      aria-invalid={isInvalid}
+      title={isInvalid ? `La nota tiene que estar entre ${MIN_GRADE} y ${MAX_GRADE}` : undefined}
+      onChange={(event) => setText(event.target.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.currentTarget.blur();
+        }
+      }}
+      className={`h-9 w-[60px] rounded-lg border bg-white px-2 text-center text-[13px] font-semibold tabular-nums text-zinc-900 outline-none transition placeholder:font-medium placeholder:text-zinc-400 focus:ring-2 ${
+        isInvalid
+          ? "border-red-400 focus:ring-red-200"
+          : "border-zinc-200 focus:border-[#7B1730] focus:ring-[#7B1730]/15"
+      }`}
       />
-    </label>
   );
 }

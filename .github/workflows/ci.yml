@@ -20,3 +20,17 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+
+      - name: Instalar navegador para las pruebas
+        run: npx playwright install --with-deps chromium
+
+      - name: Pruebas de navegador
+        run: npm run test:e2e
+
+      - name: Guardar el detalle si fallan
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
