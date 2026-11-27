@@ -214,15 +214,23 @@ export default function Home() {
   const semesterLabel = `${calendar.nextSemester}° cuatrimestre`;
 
   return (
-    <AppLayout>
+    <AppLayout
+      careers={careers.map(({ career: option }) => ({
+        id: option.id,
+        name: option.shortName ?? option.name,
+        plan: option.plan,
+      }))}
+      activeCareerId={career.career.id}
+      onCareerChange={planner.setCareer}
+    >
       <Toast toast={planner.toast} onClose={planner.closeToast} />
 
       <div id="inicio" className="mx-auto flex max-w-6xl scroll-mt-24 flex-col gap-5 lg:scroll-mt-8">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-1.5">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-semibold text-[#7B1730]">
-              <label className="relative inline-flex items-center">
-                <span className="sr-only">Carrera</span>
+              <label className="relative inline-flex items-center gap-2">
+                <span className="text-zinc-600">Carrera:</span>
                 <select
                   value={career.career.id}
                   onChange={(event) => planner.setCareer(event.target.value)}
@@ -234,7 +242,7 @@ export default function Home() {
                     </option>
                   ))}
                 </select>
-                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="pointer-events-none absolute right-2">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="pointer-events-none absolute right-2 text-[#7B1730]">
                   <path d="m6 9 6 6 6-6" />
                 </svg>
               </label>
