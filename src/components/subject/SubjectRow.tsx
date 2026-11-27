@@ -4,6 +4,7 @@ import type { AcademicSubject } from "../../types/AcademicSubject";
 import type { SubjectStatus } from "../../types/SubjectProgress";
 import type { SubjectViewModel } from "../../utils/subjectView";
 
+import GradeInput from "./GradeInput";
 import {
   describePrerequisites,
   joinNames,
@@ -18,6 +19,8 @@ type SubjectRowProps = {
   viewModel: SubjectViewModel;
   allSubjects: AcademicSubject[];
   onStatusChange: (subject: AcademicSubject, status: SubjectStatus) => boolean;
+  grade?: number;
+  onGradeChange: (subjectId: string, grade: number | null) => void;
 };
 
 const options: SubjectStatus[] = ["pending", "in_progress", "regular", "passed"];
@@ -35,6 +38,8 @@ export default function SubjectRow({
   viewModel,
   allSubjects,
   onStatusChange,
+  grade,
+  onGradeChange,
 }: SubjectRowProps) {
   const {
     subject,
@@ -74,7 +79,7 @@ export default function SubjectRow({
 
   return (
     <li className={`border-b border-zinc-100 last:border-b-0 ${isExpanded ? "bg-zinc-50/70" : ""}`}>
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-3 sm:grid-cols-[40px_minmax(0,1.3fr)_minmax(0,1fr)_52px_160px_36px] sm:gap-x-4">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-3 sm:grid-cols-[40px_minmax(0,1.3fr)_minmax(0,1fr)_52px_auto] sm:gap-x-4">
         <span className="hidden text-[13px] tabular-nums text-zinc-500 sm:block">
           {subject.code}
         </span>
@@ -102,7 +107,16 @@ export default function SubjectRow({
           {subject.hours} h
         </span>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
+          {status === "passed" && (
+            <GradeInput
+              key={grade ?? "sin-nota"}
+              subjectName={subject.name}
+              grade={grade}
+              onChange={(value) => onGradeChange(subject.id, value)}
+            />
+          )}
+
           <label className="relative block">
             <span className="sr-only">Estado de {subject.name}</span>
 
@@ -116,7 +130,7 @@ export default function SubjectRow({
               onChange={(event) =>
                 onStatusChange(subject, event.target.value as SubjectStatus)
               }
-              className={`h-9 w-[136px] cursor-pointer appearance-none rounded-full border py-0 pl-7 pr-7 text-[13px] font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[#7B1730]/40 sm:w-[160px] ${style.pill}`}
+              className={`h-9 w-[124px] cursor-pointer appearance-none rounded-full border py-0 pl-7 pr-7 text-[13px] font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[#7B1730]/40 sm:w-[160px] ${style.pill}`}
             >
               {options.map((option) => (
                 <option

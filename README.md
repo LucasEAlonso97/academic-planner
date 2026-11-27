@@ -10,6 +10,10 @@ Aplicación web para organizar el progreso académico, consultar correlativas, v
 - Validación automática de correlativas, con aviso cuando un cambio afecta a otras materias.
 - Resumen del avance y aviso de qué materias podés cursar el próximo cuatrimestre (o qué correlativa te falta).
 - Plan de estudios en lista, con búsqueda y filtros, o en vista de mapa de toda la carrera.
+- Notas de las materias aprobadas y promedio.
+- Planificación de los próximos cuatrimestres: armado automático según cuántas materias querés cursar por cuatrimestre, aviso si una correlativa no llega y fecha estimada para terminar de cursar (por título).
+- Varias carreras: Tecnicatura en Análisis de Sistemas Informáticos (VCO-19) y Licenciatura en Periodismo, Gestión y Producción de Contenidos (I13-25).
+- Pasar el progreso a otro dispositivo con un QR o un link, sin servidor.
 - "Deshacer" después de cada cambio.
 - Simulación de escenarios sin tocar el progreso real.
 - Exportación e importación del progreso mediante PDF.
@@ -42,7 +46,7 @@ Cada push y pull request corre lint, tests y build en GitHub Actions.
 
 ## Estructura
 
-- `src/data/` — plan de estudios en JSON (`analista-sistemas.json`) y su punto de acceso (`career.ts`).
+- `src/data/` — planes de estudio en JSON y el registro de carreras (`career.ts`). Para sumar una carrera: agregá su JSON con el mismo formato y sumalo a la lista en `career.ts`.
 - `src/utils/` — reglas de correlativas, validación del progreso, calendario y textos derivados. Todo con tests en `__tests__/`.
 - `src/hooks/usePlanner.ts` — lógica de la pantalla: cambios de estado, simulación y "Deshacer".
 - `src/store/` — progreso guardado en `localStorage` (formato versionado).

@@ -30,6 +30,7 @@ const navigationGroups: NavigationGroup[] = [
     title: "Carrera",
     items: [
       { label: "Plan de estudios", href: "#plan-academico" },
+      { label: "Planificar", href: "#planificar" },
       { label: "Herramientas", href: "#herramientas" },
     ],
   },
@@ -224,9 +225,9 @@ export default function AppLayout({
             className="h-11 w-11 rounded-xl ring-1 ring-white/20"
           />
 
-          <h1 className="mt-5 text-xl font-black">
+          <p className="mt-5 text-xl font-black">
             UAI Planner
-          </h1>
+          </p>
 
           <p className="mt-1 text-sm leading-5 text-white/55">
             Tu trayectoria académica,

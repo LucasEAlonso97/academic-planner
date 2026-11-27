@@ -7,7 +7,7 @@ import {
 import ConfirmDialog from "./ConfirmDialog";
 
 import type { AcademicSubject } from "../../types/AcademicSubject";
-import type { SubjectStatus } from "../../types/SubjectProgress";
+import type { CareerRecord } from "../../utils/progressValidation";
 
 // jsPDF y pdf-lib pesan casi 1 MB: se cargan recién
 // cuando la persona exporta o importa.
@@ -18,11 +18,9 @@ type ProgressPdfActionsProps = {
   careerName: string;
   plan: string;
   subjects: AcademicSubject[];
-  progress: Record<string, SubjectStatus>;
+  record: CareerRecord;
 
-  onImport: (
-    progress: Record<string, SubjectStatus>
-  ) => void;
+  onImport: (record: CareerRecord) => void;
 };
 
 type ActionMessage =
@@ -34,14 +32,14 @@ type ActionMessage =
 
 type PendingImport = {
   fileName: string;
-  progress: Record<string, SubjectStatus>;
+  record: CareerRecord;
 };
 
 export default function ProgressPdfActions({
   careerName,
   plan,
   subjects,
-  progress,
+  record,
   onImport,
 }: ProgressPdfActionsProps) {
   const fileInputRef =
@@ -71,7 +69,7 @@ export default function ProgressPdfActions({
         careerName,
         plan,
         subjects,
-        progress,
+        record,
       });
 
       setMessage({
@@ -113,7 +111,7 @@ export default function ProgressPdfActions({
       const { importProgressFromPdf } =
         await loadPdfUtils();
 
-      const importedProgress =
+      const importedRecord =
         await importProgressFromPdf(
           file,
           plan,
@@ -125,7 +123,7 @@ export default function ProgressPdfActions({
       // hasta que el usuario confirme.
       setPendingImport({
         fileName: file.name,
-        progress: importedProgress,
+        record: importedRecord,
       });
     } catch (error) {
       setMessage({
@@ -145,7 +143,7 @@ export default function ProgressPdfActions({
       return;
     }
 
-    onImport(pendingImport.progress);
+    onImport(pendingImport.record);
 
     setPendingImport(null);
 
@@ -167,7 +165,7 @@ export default function ProgressPdfActions({
   const importedApprovedCount = pendingImport
     ? subjects.filter(
         (subject) =>
-          pendingImport.progress[subject.id] ===
+          pendingImport.record.progress[subject.id] ===
           "passed"
       ).length
     : 0;
@@ -175,7 +173,7 @@ export default function ProgressPdfActions({
   const importedRegularCount = pendingImport
     ? subjects.filter(
         (subject) =>
-          pendingImport.progress[subject.id] ===
+          pendingImport.record.progress[subject.id] ===
           "regular"
       ).length
     : 0;
@@ -183,7 +181,7 @@ export default function ProgressPdfActions({
   const importedInProgressCount = pendingImport
     ? subjects.filter(
         (subject) =>
-          pendingImport.progress[subject.id] ===
+          pendingImport.record.progress[subject.id] ===
           "in_progress"
       ).length
     : 0;
