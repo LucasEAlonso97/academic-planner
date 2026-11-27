@@ -14,11 +14,20 @@
  *   80              ← carga horaria
  *   Título: TÉCNICO UNIVERSITARIO EN PERIODISMO   ← título intermedio
  *
+ * Al principio puede haber líneas de metadatos (opcionales):
+ *   # fuente: https://…   ← página oficial del plan
+ *   # cargado: 2026-11-27 ← fecha en que se copió
+ *
  * Solo usa sintaxis de TypeScript "borrable" para poder correrlo con
  * `node --experimental-strip-types` desde scripts/import-plan.ts.
  */
 
-import type { AcademicSubject, CareerData, CareerTitle } from "../types/AcademicSubject";
+import type {
+  AcademicSubject,
+  CareerData,
+  CareerSource,
+  CareerTitle,
+} from "../types/AcademicSubject";
 
 export class PlanParseError extends Error {}
 
@@ -106,10 +115,27 @@ export type ParsePlanOptions = {
 };
 
 export function parsePlanText(text: string, options: ParsePlanOptions = {}): CareerData {
-  const lines = text
+  const allLines = text
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter((line) => line.length > 0);
+
+  // Metadatos "# clave: valor".
+  const source: CareerSource = {};
+
+  for (const line of allLines) {
+    const meta = /^#\s*(fuente|cargado)\s*:\s*(.+)$/i.exec(line);
+
+    if (meta?.[1].toLowerCase() === "fuente") source.url = meta[2].trim();
+    if (meta?.[1].toLowerCase() === "cargado") {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(meta[2].trim())) {
+        throw new PlanParseError('La fecha de "# cargado:" tiene que ser AAAA-MM-DD.');
+      }
+      source.loadedAt = meta[2].trim();
+    }
+  }
+
+  const lines = allLines.filter((line) => !line.startsWith("#"));
 
   if (lines.length === 0) {
     throw new PlanParseError("El texto está vacío.");
@@ -282,6 +308,7 @@ export function parsePlanText(text: string, options: ParsePlanOptions = {}): Car
       plan,
       years,
       ...(titles.length > 0 ? { titles } : {}),
+      ...(source.url || source.loadedAt ? { source } : {}),
     },
     subjects,
   };

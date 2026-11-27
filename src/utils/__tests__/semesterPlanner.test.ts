@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { careers, getCareer } from "../../data/career";
+import { getCareer, getLoadedCareers } from "../../data/career";
 import {
   autoPlan,
   effectivePlan,
@@ -11,6 +11,8 @@ import {
   upcomingTerms,
   validatePlan,
 } from "../semesterPlanner";
+
+const careers = getLoadedCareers();
 
 const { subjects } = getCareer("analista-sistemas");
 const byCode = (code: number) => subjects.find((subject) => subject.code === code)!;

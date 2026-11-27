@@ -1,6 +1,7 @@
 import type { NextSemesterPlan } from "../../utils/planInsights";
 import { joinNames } from "../../utils/planInsights";
 import { pluralize } from "../../utils/statusDisplay";
+import { subjectDisplayName } from "../../utils/subjectNames";
 
 const MAX_CHIPS = 8;
 
@@ -8,12 +9,14 @@ type NextSemesterCalloutProps = {
   periodLabel: string;
   semesterLabel: string;
   plan: NextSemesterPlan;
+  customNames: Record<string, string>;
 };
 
 export default function NextSemesterCallout({
   periodLabel,
   semesterLabel,
   plan,
+  customNames,
 }: NextSemesterCalloutProps) {
   const { available, blockers } = plan;
   const topBlocker = blockers[0];
@@ -67,7 +70,7 @@ export default function NextSemesterCallout({
                   key={subject.id}
                   className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-[13px] font-medium text-zinc-800"
                 >
-                  {subject.name}
+                  {subjectDisplayName(subject, customNames)}
                 </li>
               ))}
               {available.length > MAX_CHIPS && (

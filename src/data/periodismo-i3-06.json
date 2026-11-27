@@ -15,7 +15,10 @@
         "name": "Licenciado en Periodismo",
         "years": 4
       }
-    ]
+    ],
+    "source": {
+      "loadedAt": "2026-11-27"
+    }
   },
   "subjects": [
     {

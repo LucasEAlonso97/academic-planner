@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { getCareer } from "../data/career";
+import { getCareer, loadCareer } from "../data/career";
 import { useAcademicProgressStore } from "../store/useAcademicProgressStore";
 
 import type { AcademicSubject } from "../types/AcademicSubject";
@@ -67,6 +67,10 @@ export function usePlanner() {
   const replacePlan = useAcademicProgressStore((state) => state.replacePlan);
   const setPace = useAcademicProgressStore((state) => state.setPace);
   const replaceCareerRecord = useAcademicProgressStore((state) => state.replaceCareerRecord);
+  const equivalences = useAcademicProgressStore((state) => state.equivalences);
+  const customNames = useAcademicProgressStore((state) => state.customNames);
+  const setEquivalence = useAcademicProgressStore((state) => state.setEquivalence);
+  const setCustomName = useAcademicProgressStore((state) => state.setCustomName);
   const updateSubjectStatus = useAcademicProgressStore((state) => state.updateSubjectStatus);
   const replaceProgress = useAcademicProgressStore((state) => state.replaceProgress);
   const resetProgress = useAcademicProgressStore((state) => state.resetProgress);
@@ -295,27 +299,48 @@ export function usePlanner() {
     );
   };
 
-  const setCareer = (nextCareerId: string) => {
-    if (nextCareerId === careerId) {
-      return;
+  const [loadingCareerId, setLoadingCareerId] = useState<string | null>(null);
+
+  /** Descarga la carrera (si hace falta) y la activa. */
+  const setCareer = async (nextCareerId: string) => {
+    if (nextCareerId === careerId && !useAcademicProgressStore.getState().isFirstVisit) {
+      return true;
     }
 
+    setLoadingCareerId(nextCareerId);
+
+    try {
+      await loadCareer(nextCareerId);
+    } catch {
+      setLoadingCareerId(null);
+      showToast("error", "No se pudo cargar la carrera", "Revisá tu conexión e intentá de nuevo.");
+      return false;
+    }
+
+    setLoadingCareerId(null);
     setIsSimulationMode(false);
     setSimulationProgress({});
     setPendingStatusChange(null);
     setToast(null);
     setCareerInStore(nextCareerId);
+
+    return true;
   };
 
   return {
     career,
     subjects,
     setCareer,
+    loadingCareerId,
     progress,
     grades,
     planned,
     pace,
-    record: { progress, grades, planned, pace },
+    record: { progress, grades, planned, pace, equivalences, customNames },
+    equivalences,
+    customNames,
+    setEquivalence,
+    setCustomName,
     setGrade,
     setPlannedTerm,
     replacePlan,

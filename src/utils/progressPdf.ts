@@ -6,6 +6,7 @@ import type { SubjectStatus } from "../types/SubjectProgress";
 
 import { formatGrade, summarizeGrades } from "./grades";
 import { periodGroups } from "./subjectPeriods";
+import { subjectDisplayName } from "./subjectNames";
 import {
   sanitizeCareerRecord,
   type CareerRecord,
@@ -31,6 +32,8 @@ type ProgressPdfBackup = {
   grades?: Record<string, number>;
   planned?: Record<string, string>;
   pace?: number;
+  equivalences?: Record<string, true>;
+  customNames?: Record<string, string>;
 };
 
 type ExportProgressPdfOptions = {
@@ -98,6 +101,8 @@ export function exportProgressToPdf({
     grades: record.grades,
     planned: record.planned,
     pace: record.pace,
+    equivalences: record.equivalences,
+    customNames: record.customNames,
   };
 
   const encodedBackup = encodeBase64(
@@ -226,7 +231,7 @@ export function exportProgressToPdf({
     },
   ];
 
-  const { average } = summarizeGrades(subjects, progress, grades);
+  const { average } = summarizeGrades(subjects, progress, grades, record.equivalences);
 
   if (average !== null) {
     summaryItems.push({ label: "Promedio", value: formatGrade(average) });
@@ -344,7 +349,7 @@ export function exportProgressToPdf({
 
         const title = `${String(
           subject.code
-        ).padStart(2, "0")} - ${subject.name}`;
+        ).padStart(2, "0")} - ${subjectDisplayName(subject, record.customNames)}`;
 
         const titleLines =
           document.splitTextToSize(title, 125);
@@ -387,9 +392,11 @@ export function exportProgressToPdf({
         const grade = grades[subject.id];
 
         document.text(
-          status === "passed" && grade !== undefined
-            ? `${statusLabels[status]} · ${formatGrade(grade)}`
-            : statusLabels[status],
+          status === "passed" && record.equivalences[subject.id]
+            ? "Aprobada (equiv.)"
+            : status === "passed" && grade !== undefined
+              ? `${statusLabels[status]} · ${formatGrade(grade)}`
+              : statusLabels[status],
           pageWidth - rightMargin - 4,
           cursorY + 1,
           {
@@ -556,6 +563,8 @@ export async function importProgressFromPdf(
       grades: backup.grades,
       planned: backup.planned,
       pace: backup.pace,
+      equivalences: backup.equivalences,
+      customNames: backup.customNames,
     },
     subjects
   ).record;

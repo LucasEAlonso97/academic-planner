@@ -4,8 +4,8 @@
  *   npm run import-plan -- plans/mi-carrera.txt
  *
  * Copiá la página del plan en la web de la UAI, pegala en un .txt dentro
- * de plans/ y corré el comando. Crea src/data/<id>.json; después sumalo a
- * la lista en src/data/career.ts.
+ * de plans/ y corré el comando. Crea src/data/<id>.json y te muestra la
+ * línea para sumar a `careerIndex` en src/data/career.ts.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -13,7 +13,7 @@ import { basename } from "node:path";
 
 import { PlanParseError, parsePlanText } from "../src/utils/planParser.ts";
 
-const [file, id] = process.argv.slice(2);
+const [file, idArg] = process.argv.slice(2);
 
 if (!file) {
   console.error("Uso: npm run import-plan -- plans/archivo.txt [id-de-la-carrera]");
@@ -21,7 +21,7 @@ if (!file) {
 }
 
 try {
-  const data = parsePlanText(readFileSync(file, "utf8"), id ? { id } : {});
+  const data = parsePlanText(readFileSync(file, "utf8"), idArg ? { id: idArg } : {});
   const output = `src/data/${data.career.id}.json`;
 
   writeFileSync(output, JSON.stringify(data, null, 2) + "\n");
@@ -31,8 +31,23 @@ try {
   console.log(`✔ ${data.career.name} (plan ${data.career.plan})`);
   console.log(`  ${data.subjects.length} materias en ${data.career.years} años, ${correlativas} con correlativas`);
   (data.career.titles ?? []).forEach((title) => console.log(`  Título: ${title.name} (${title.years}° año)`));
+  if (!data.career.source?.url) {
+    console.log(`  (Sin link oficial: agregá "# fuente: https://…" al principio del .txt)`);
+  }
+
   console.log(`\nGuardado en ${output} (desde ${basename(file)}).`);
-  console.log(`Falta sumarlo a la lista de carreras en src/data/career.ts.`);
+  console.log(`Falta sumarla a \`careerIndex\` en src/data/career.ts:\n`);
+
+  const { id, name, shortName, degree, plan } = data.career;
+  const fields = [
+    `id: ${JSON.stringify(id)}`,
+    `name: ${JSON.stringify(name)}`,
+    ...(shortName ? [`shortName: ${JSON.stringify(shortName)}`] : []),
+    ...(degree ? [`degree: ${JSON.stringify(degree)}`] : []),
+    `plan: ${JSON.stringify(plan)}`,
+    `load: () => import("./${id}.json")`,
+  ];
+  console.log(`  { ${fields.join(", ")} },`);
 } catch (error) {
   if (error instanceof PlanParseError) {
     console.error(`✘ ${error.message}`);

@@ -5,6 +5,7 @@ import type { SubjectStatus } from "../../types/SubjectProgress";
 
 import { MAX_PACE, MIN_PACE } from "../../utils/progressValidation";
 import { flexibleSubjectIds } from "../../utils/subjectPeriods";
+import { subjectDisplayName } from "../../utils/subjectNames";
 import {
   canStartIn,
   effectivePlan,
@@ -31,6 +32,7 @@ type PlanSectionProps = {
   onAutoPlan: () => void;
   onClearPlan: () => void;
   onPaceChange: (pace: number) => void;
+  customNames: Record<string, string>;
 };
 
 /** Cuántos cuatrimestres se muestran como mínimo y como máximo. */
@@ -116,6 +118,7 @@ export default function PlanSection({
   onAutoPlan,
   onClearPlan,
   onPaceChange,
+  customNames,
 }: PlanSectionProps) {
   const plan = useMemo(
     () => effectivePlan(subjects, progress, planned, start),
@@ -262,7 +265,7 @@ export default function PlanSection({
                             }`}
                           >
                             <p className="text-[13px] font-semibold leading-snug text-zinc-900">
-                              {subject.name}
+                              {subjectDisplayName(subject, customNames)}
                             </p>
 
                             {subjectIssues.map((issue) => (
@@ -307,7 +310,9 @@ export default function PlanSection({
                 {unplanned.map((subject) => (
                   <li key={subject.id} className="flex items-center justify-between gap-3 py-2.5">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-zinc-900">{subject.name}</p>
+                      <p className="text-sm font-semibold text-zinc-900">
+                        {subjectDisplayName(subject, customNames)}
+                      </p>
                       <p className="text-xs text-zinc-500">
                         Cód. {subject.code} · {subject.year}° año · {whenOffered(subject, flexible)}
                       </p>

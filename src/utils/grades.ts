@@ -6,16 +6,20 @@ export type GradeSummary = {
   average: number | null;
   /** Materias aprobadas con nota cargada. */
   graded: number;
-  /** Materias aprobadas sin nota. */
+  /** Materias aprobadas sin nota (sin contar equivalencias). */
   missing: number;
 };
 
 export function summarizeGrades(
   subjects: AcademicSubject[],
   progress: Record<string, SubjectStatus>,
-  grades: Record<string, number>
+  grades: Record<string, number>,
+  equivalences: Record<string, true> = {}
 ): GradeSummary {
-  const passed = subjects.filter((subject) => progress[subject.id] === "passed");
+  // Las equivalencias no llevan nota: no cuentan en el promedio.
+  const passed = subjects.filter(
+    (subject) => progress[subject.id] === "passed" && !equivalences[subject.id]
+  );
   const values = passed
     .map((subject) => grades[subject.id])
     .filter((grade): grade is number => typeof grade === "number");

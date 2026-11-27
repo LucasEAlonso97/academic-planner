@@ -1,8 +1,10 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-import { careers, getCareer } from "../../data/career";
+import { careerSummaries, getCareer, getLoadedCareers } from "../../data/career";
 import { PlanParseError, parsePlanText, toTitleCase } from "../planParser";
+
+const careers = getLoadedCareers();
 
 const read = (file: string) => readFileSync(new URL(`../../../plans/${file}`, import.meta.url), "utf8");
 
@@ -81,5 +83,22 @@ describe("plans/ y las carreras de la app", () => {
     careers
       .filter((career) => career.career.id !== "analista-sistemas")
       .forEach((career) => expect(plansInFiles).toContain(career.career.plan));
+  });
+});
+
+describe("índice de carreras", () => {
+  it("coincide con los datos de cada carrera", () => {
+    expect(careerSummaries).toHaveLength(careers.length);
+
+    for (const summary of careerSummaries) {
+      const { career } = getCareer(summary.id);
+      expect(summary).toEqual({
+        id: career.id,
+        name: career.name,
+        plan: career.plan,
+        ...(career.shortName ? { shortName: career.shortName } : {}),
+        ...(career.degree ? { degree: career.degree } : {}),
+      });
+    }
   });
 });

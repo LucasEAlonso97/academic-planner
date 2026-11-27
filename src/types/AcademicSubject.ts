@@ -16,6 +16,15 @@ export interface CareerInfo {
   years: number;
   /** Títulos que otorga la carrera, del intermedio al final. */
   titles?: CareerTitle[];
+  /** De dónde sale el plan y cuándo se cargó. */
+  source?: CareerSource;
+}
+
+export interface CareerSource {
+  /** Página oficial del plan. */
+  url?: string;
+  /** Fecha en que se copió el plan, "AAAA-MM-DD". */
+  loadedAt?: string;
 }
 
 export interface AcademicSubject {

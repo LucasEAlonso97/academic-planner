@@ -20,6 +20,10 @@ type YearSectionProps = {
   onStatusChange: (subject: AcademicSubject, status: SubjectStatus) => boolean;
   grades: Record<string, number>;
   onGradeChange: (subjectId: string, grade: number | null) => void;
+  equivalences: Record<string, true>;
+  onEquivalenceChange: (subjectId: string, isEquivalence: boolean) => void;
+  customNames: Record<string, string>;
+  onCustomNameChange: (subjectId: string, name: string | null) => void;
 };
 
 
@@ -34,6 +38,10 @@ export default function YearSection({
   onStatusChange,
   grades,
   onGradeChange,
+  equivalences,
+  onEquivalenceChange,
+  customNames,
+  onCustomNameChange,
 }: YearSectionProps) {
   const [isOpenByUser, setIsOpenByUser] = useState(defaultOpen);
   const isOpen = forceOpen || isOpenByUser;
@@ -110,6 +118,10 @@ export default function YearSection({
                       onStatusChange={onStatusChange}
                       grade={grades[viewModel.subject.id]}
                       onGradeChange={onGradeChange}
+                      isEquivalence={Boolean(equivalences[viewModel.subject.id])}
+                      onEquivalenceChange={onEquivalenceChange}
+                      customName={customNames[viewModel.subject.id]}
+                      onCustomNameChange={onCustomNameChange}
                     />
                   ))}
                 </ul>

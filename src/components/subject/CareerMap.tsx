@@ -1,6 +1,7 @@
 import type { SubjectViewModel } from "../../utils/subjectView";
 
 import { formatGrade } from "../../utils/grades";
+import { subjectDisplayName } from "../../utils/subjectNames";
 import {
   displayStatusOrder,
   getDisplayStatus,
@@ -14,6 +15,8 @@ type CareerMapProps = {
   keySubjectId: string | null;
   keySubjectLabel: string | null;
   grades: Record<string, number>;
+  equivalences: Record<string, true>;
+  customNames: Record<string, string>;
 };
 
 const semesters = [1, 2] as const;
@@ -24,6 +27,8 @@ export default function CareerMap({
   keySubjectId,
   keySubjectLabel,
   grades,
+  equivalences,
+  customNames,
 }: CareerMapProps) {
   const renderTile = (viewModel: SubjectViewModel) => {
     const status = getDisplayStatus(viewModel);
@@ -38,12 +43,17 @@ export default function CareerMap({
       >
         <span className="flex justify-between gap-2 text-[11px] font-semibold opacity-80">
           <span>Cód. {viewModel.subject.code}</span>
-          {status === "passed" && grades[viewModel.subject.id] !== undefined && (
-            <span>Nota {formatGrade(grades[viewModel.subject.id])}</span>
+          {status === "passed" && equivalences[viewModel.subject.id] ? (
+            <span>Equivalencia</span>
+          ) : (
+            status === "passed" &&
+            grades[viewModel.subject.id] !== undefined && (
+              <span>Nota {formatGrade(grades[viewModel.subject.id])}</span>
+            )
           )}
         </span>
         <span className="text-[13px] font-semibold leading-tight">
-          {viewModel.subject.name}
+          {subjectDisplayName(viewModel.subject, customNames)}
         </span>
         <span className="sr-only">{statusStyles[status].label}</span>
         {isKey && keySubjectLabel && (

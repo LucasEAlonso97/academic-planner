@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { careers, getCareer } from "../../data/career";
+import { getCareer, getLoadedCareers } from "../../data/career";
 import { decodeShareCode, encodeShareCode } from "../shareCode";
+
+const careers = getLoadedCareers();
 
 const lookup = (careerId: string) =>
   careers.find((career) => career.career.id === careerId)?.subjects ?? null;
@@ -16,6 +18,8 @@ describe("shareCode", () => {
       grades: { [first.id]: 8.5 },
       planned: { [subjects[10].id]: "2027-1" },
       pace: 4,
+      equivalences: { [first.id]: true as const },
+      customNames: {},
     };
 
     const code = encodeShareCode("periodismo", subjects, { ...record, progress: { ...record.progress } });
