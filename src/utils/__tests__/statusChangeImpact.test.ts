@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { subjects } from "../../data/career";
+import { getCareer } from "../../data/career";
+
+const { subjects } = getCareer("analista-sistemas");
 import { getAffectedSubjects } from "../statusChangeImpact";
 
 const byCode = (code: number) => subjects.find((subject) => subject.code === code)!;

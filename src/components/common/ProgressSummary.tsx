@@ -1,3 +1,4 @@
+import { formatGrade, type GradeSummary } from "../../utils/grades";
 import {
   statusStyles,
   type DisplayStatus,
@@ -7,6 +8,7 @@ type ProgressSummaryProps = {
   counts: Record<DisplayStatus, number>;
   total: number;
   isSimulation: boolean;
+  gradeSummary: GradeSummary;
 };
 
 const statOrder: { status: DisplayStatus; label: string }[] = [
@@ -22,6 +24,7 @@ export default function ProgressSummary({
   counts,
   total,
   isSimulation,
+  gradeSummary,
 }: ProgressSummaryProps) {
   const percentage = total === 0 ? 0 : Math.round((counts.passed / total) * 100);
 
@@ -42,12 +45,39 @@ export default function ProgressSummary({
               {counts.passed} de {total} materias aprobadas
             </span>
 
+            {gradeSummary.average !== null && (
+              <span
+                className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[13px] font-semibold text-zinc-800"
+                title={
+                  gradeSummary.missing > 0
+                    ? `${gradeSummary.missing} aprobada${gradeSummary.missing === 1 ? "" : "s"} sin nota`
+                    : undefined
+                }
+              >
+                Promedio {formatGrade(gradeSummary.average)}
+              </span>
+            )}
+
             {isSimulation && (
               <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
                 Simulado
               </span>
             )}
           </div>
+
+          {gradeSummary.average === null && counts.passed > 0 && (
+            <p className="text-[13px] text-zinc-500">
+              Cargá la nota de tus aprobadas para ver tu promedio.
+            </p>
+          )}
+
+          {gradeSummary.average !== null && gradeSummary.missing > 0 && (
+            <p className="text-[13px] text-zinc-500">
+              {gradeSummary.missing === 1
+                ? "1 aprobada sin nota: no cuenta en el promedio."
+                : `${gradeSummary.missing} aprobadas sin nota: no cuentan en el promedio.`}
+            </p>
+          )}
 
           <div
             role="progressbar"

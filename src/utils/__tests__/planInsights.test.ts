@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { subjects } from "../../data/career";
+import { getCareer } from "../../data/career";
+
+const { subjects } = getCareer("analista-sistemas");
 import { describePrerequisites, getNextSemesterPlan, joinNames } from "../planInsights";
 import { buildSubjectViewModel } from "../subjectView";
 import type { SubjectStatus } from "../../types/SubjectProgress";

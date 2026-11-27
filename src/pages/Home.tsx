@@ -7,16 +7,27 @@ import ProgressPdfActions from "../components/common/ProgressPdfActions";
 import ProgressSummary from "../components/common/ProgressSummary";
 import SimulationModePanel from "../components/common/SimulationModePanel";
 import Toast from "../components/common/Toast";
+import PlanSection from "../components/plan/PlanSection";
+import ShareProgressCard from "../components/common/ShareProgressCard";
 import CareerMap from "../components/subject/CareerMap";
 import NextSemesterCallout from "../components/subject/NextSemesterCallout";
 import SubjectFilters, { type SubjectFilter } from "../components/subject/SubjectFilters";
 import YearSection from "../components/subject/YearSection";
 
-import { career, subjects } from "../data/career";
+import { careers, getCareer, isKnownCareer } from "../data/career";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { usePlanner } from "../hooks/usePlanner";
 
 import { getAcademicCalendar } from "../utils/academicCalendar";
+import { summarizeGrades } from "../utils/grades";
+import { autoPlan, makeTerm } from "../utils/semesterPlanner";
+import {
+  buildShareUrl,
+  clearShareCodeFromUrl,
+  decodeShareCode,
+  encodeShareCode,
+  readShareCodeFromUrl,
+} from "../utils/shareCode";
 import {
   describePrerequisites,
   findBlockers,
@@ -31,8 +42,6 @@ import {
   type DisplayStatus,
 } from "../utils/statusDisplay";
 
-const years = [...new Set(subjects.map((subject) => subject.year))].sort();
-
 function normalizeSearchText(value: string) {
   return value
     .normalize("NFD")
@@ -43,18 +52,78 @@ function normalizeSearchText(value: string) {
 
 type PlanView = "list" | "map";
 
+/** Si la página se abrió con un link de "Pasar a otro dispositivo". */
+function readLinkImport() {
+  const code = readShareCodeFromUrl();
+
+  if (!code) {
+    return null;
+  }
+
+  const decoded = decodeShareCode(code, (careerId) =>
+    isKnownCareer(careerId) ? getCareer(careerId).subjects : null
+  );
+
+  if (!decoded) {
+    clearShareCodeFromUrl();
+  }
+
+  return decoded;
+}
+
 export default function Home() {
   const planner = usePlanner();
-  const { viewModels, activeProgress, isSimulationMode } = planner;
+  const { career, subjects, viewModels, activeProgress, isSimulationMode } = planner;
+  const years = useMemo(
+    () => [...new Set(subjects.map((subject) => subject.year))].sort((a, b) => a - b),
+    [subjects]
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<SubjectFilter>("all");
   const [planView, setPlanView] = useState<PlanView>("list");
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [isApplyDialogOpen, setIsApplyDialogOpen] = useState(false);
+  const [linkImport, setLinkImport] = useState(readLinkImport);
+
+  const closeLinkImport = () => {
+    clearShareCodeFromUrl();
+    setLinkImport(null);
+  };
 
   const isSmallScreen = useMediaQuery("(max-width: 639px)");
   const calendar = getAcademicCalendar();
+
+  // El plan arranca en el próximo cuatrimestre.
+  const planStart = useMemo(
+    () => makeTerm(calendar.nextAcademicYear, calendar.nextSemester),
+    [calendar.nextAcademicYear, calendar.nextSemester]
+  );
+  const currentTerm = calendar.activeSemester
+    ? makeTerm(new Date().getFullYear(), calendar.activeSemester)
+    : null;
+
+  const handleAutoPlan = () => {
+    const previous = planner.planned;
+
+    planner.replacePlan(autoPlan(subjects, planner.progress, planStart, planner.pace));
+    planner.notify(
+      "success",
+      "Plan armado",
+      `Hasta ${planner.pace} materias por cuatrimestre. Podés moverlas a mano.`,
+      { label: "Deshacer", onClick: () => planner.replacePlan(previous) }
+    );
+  };
+
+  const handleClearPlan = () => {
+    const previous = planner.planned;
+
+    planner.replacePlan({});
+    planner.notify("info", "Plan borrado", undefined, {
+      label: "Deshacer",
+      onClick: () => planner.replacePlan(previous),
+    });
+  };
 
   const counts = useMemo(() => {
     const result = Object.fromEntries(
@@ -94,7 +163,8 @@ export default function Home() {
     ) ?? years[0];
 
   const [mobileYear, setMobileYear] = useState<number | null>(null);
-  const selectedMobileYear = mobileYear ?? activeYear;
+  const selectedMobileYear =
+    mobileYear !== null && years.includes(mobileYear) ? mobileYear : activeYear;
 
   const filteredViewModels = useMemo(() => {
     const query = normalizeSearchText(searchQuery);
@@ -144,15 +214,42 @@ export default function Home() {
   const semesterLabel = `${calendar.nextSemester}° cuatrimestre`;
 
   return (
-    <AppLayout>
+    <AppLayout
+      careers={careers.map(({ career: option }) => ({
+        id: option.id,
+        name: option.shortName ?? option.name,
+        plan: option.plan,
+      }))}
+      activeCareerId={career.career.id}
+      onCareerChange={planner.setCareer}
+    >
       <Toast toast={planner.toast} onClose={planner.closeToast} />
 
       <div id="inicio" className="mx-auto flex max-w-6xl scroll-mt-24 flex-col gap-5 lg:scroll-mt-8">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-1.5">
-            <p className="text-[13px] font-semibold text-[#7B1730]">
-              Plan {career.career.plan} · {subjects.length} materias
-            </p>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-semibold text-[#7B1730]">
+              <label className="relative inline-flex items-center gap-2">
+                <span className="text-zinc-600">Carrera:</span>
+                <select
+                  value={career.career.id}
+                  onChange={(event) => planner.setCareer(event.target.value)}
+                  className="h-8 max-w-[70vw] cursor-pointer appearance-none truncate rounded-lg border border-[#F0DCE1] bg-[#FBF3F5] py-0 pl-2.5 pr-7 font-semibold text-[#7B1730] outline-none transition hover:border-[#E3C3CC] focus-visible:ring-2 focus-visible:ring-[#7B1730]/30"
+                >
+                  {careers.map(({ career: option }) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="pointer-events-none absolute right-2 text-[#7B1730]">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </label>
+              <span>
+                Plan {career.career.plan} · {subjects.length} materias
+              </span>
+            </div>
 
             <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-zinc-950 sm:text-3xl">
               {career.career.shortName ?? career.career.name}
@@ -183,7 +280,12 @@ export default function Home() {
           />
         )}
 
-        <ProgressSummary counts={counts} total={subjects.length} isSimulation={isSimulationMode} />
+        <ProgressSummary
+          counts={counts}
+          total={subjects.length}
+          isSimulation={isSimulationMode}
+          gradeSummary={summarizeGrades(subjects, activeProgress, planner.grades)}
+        />
 
         <NextSemesterCallout
           periodLabel={periodLabel}
@@ -223,6 +325,7 @@ export default function Home() {
               years={years}
               viewModels={viewModels}
               keySubjectId={keyBlocker?.subject.id ?? null}
+              grades={planner.grades}
               keySubjectLabel={
                 keyBlocker
                   ? `Traba ${pluralize(keyBlocker.blocks.length, "materia", "materias")}`
@@ -243,7 +346,12 @@ export default function Home() {
               />
 
               {useYearTabs && (
-                <div role="group" aria-label="Año" className="grid grid-cols-3 gap-1 rounded-xl bg-zinc-200/60 p-1">
+                <div
+                  role="group"
+                  aria-label="Año"
+                  className="grid gap-1 rounded-xl bg-zinc-200/60 p-1"
+                  style={{ gridTemplateColumns: `repeat(${years.length}, minmax(0, 1fr))` }}
+                >
                   {years.map((year) => (
                     <button
                       key={year}
@@ -254,7 +362,7 @@ export default function Home() {
                         selectedMobileYear === year ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-600"
                       }`}
                     >
-                      {year}° año
+                      {year}°{years.length > 3 ? "" : " año"}
                     </button>
                   ))}
                 </div>
@@ -295,6 +403,8 @@ export default function Home() {
                         forceOpen={hasActiveFilters || useYearTabs}
                         note={yearNote(year)}
                         onStatusChange={planner.changeStatus}
+                        grades={planner.grades}
+                        onGradeChange={planner.setGrade}
                       />
                     );
                   })
@@ -302,6 +412,21 @@ export default function Home() {
             </>
           )}
         </section>
+
+        <PlanSection
+          subjects={subjects}
+          progress={planner.progress}
+          planned={planner.planned}
+          pace={planner.pace}
+          titles={career.career.titles ?? []}
+          maxYear={years[years.length - 1]}
+          start={planStart}
+          currentTerm={currentTerm}
+          onPlanSubject={planner.setPlannedTerm}
+          onAutoPlan={handleAutoPlan}
+          onClearPlan={handleClearPlan}
+          onPaceChange={planner.setPace}
+        />
 
         <section
           id="herramientas"
@@ -318,10 +443,16 @@ export default function Home() {
                 careerName={career.career.name}
                 plan={career.career.plan}
                 subjects={subjects}
-                progress={planner.progress}
-                onImport={planner.replaceProgress}
+                record={planner.record}
+                onImport={(record) => planner.replaceCareerRecord(career.career.id, record)}
               />
             )}
+
+            <ShareProgressCard
+              buildLink={() =>
+                buildShareUrl(encodeShareCode(career.career.id, subjects, planner.record))
+              }
+            />
 
             <InstallAppCard />
 
@@ -405,6 +536,50 @@ export default function Home() {
         cancelLabel="Cancelar"
         onConfirm={planner.confirmPendingStatusChange}
         onCancel={planner.cancelPendingStatusChange}
+      />
+      <ConfirmDialog
+        isOpen={linkImport !== null}
+        tone="danger"
+        title="¿Copiar este progreso acá?"
+        description={
+          linkImport ? (
+            <div>
+              <p>
+                El link trae el progreso de{" "}
+                <strong className="text-zinc-900">{getCareer(linkImport.careerId).career.name}</strong>:
+              </p>
+
+              <dl className="mt-3 grid grid-cols-3 gap-2">
+                {[
+                  ["Aprobadas", "passed"],
+                  ["Debe final", "regular"],
+                  ["Cursando", "in_progress"],
+                ].map(([label, status]) => (
+                  <div key={status} className="rounded-xl bg-zinc-50 px-3 py-2">
+                    <dt className="text-xs text-zinc-600">{label}</dt>
+                    <dd className="text-xl font-bold text-zinc-900">
+                      {Object.values(linkImport.record.progress ?? {}).filter((value) => value === status).length}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
+              <p className="mt-3 font-medium text-red-700">
+                Lo que tengas guardado de esa carrera en este dispositivo se va a reemplazar.
+              </p>
+            </div>
+          ) : null
+        }
+        confirmLabel="Copiar progreso"
+        cancelLabel="Cancelar"
+        onConfirm={() => {
+          if (linkImport) {
+            planner.replaceCareerRecord(linkImport.careerId, linkImport.record);
+            planner.notify("success", "Progreso copiado", "Ya tenés tu progreso en este dispositivo.");
+          }
+          closeLinkImport();
+        }}
+        onCancel={closeLinkImport}
       />
     </AppLayout>
   );

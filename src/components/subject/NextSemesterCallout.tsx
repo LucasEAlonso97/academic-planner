@@ -2,6 +2,8 @@ import type { NextSemesterPlan } from "../../utils/planInsights";
 import { joinNames } from "../../utils/planInsights";
 import { pluralize } from "../../utils/statusDisplay";
 
+const MAX_CHIPS = 8;
+
 type NextSemesterCalloutProps = {
   periodLabel: string;
   semesterLabel: string;
@@ -60,7 +62,7 @@ export default function NextSemesterCallout({
 
           {available.length > 0 && (
             <ul className="mt-1 flex flex-wrap gap-1.5">
-              {available.map(({ subject }) => (
+              {available.slice(0, MAX_CHIPS).map(({ subject }) => (
                 <li
                   key={subject.id}
                   className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-[13px] font-medium text-zinc-800"
@@ -68,6 +70,11 @@ export default function NextSemesterCallout({
                   {subject.name}
                 </li>
               ))}
+              {available.length > MAX_CHIPS && (
+                <li className="px-1 py-1 text-[13px] font-medium text-zinc-600">
+                  y {available.length - MAX_CHIPS} más
+                </li>
+              )}
             </ul>
           )}
 
@@ -79,6 +86,12 @@ export default function NextSemesterCallout({
               </span>
             </p>
           )}
+          <a
+            href="#planificar"
+            className="mt-1 inline-flex h-11 items-center self-start text-sm font-semibold text-[#7B1730] hover:underline"
+          >
+            Planificá los próximos cuatrimestres →
+          </a>
         </div>
       </div>
     </section>

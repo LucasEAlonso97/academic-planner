@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { subjects } from "../data/career";
+import { getCareer } from "../data/career";
 import { useAcademicProgressStore } from "../store/useAcademicProgressStore";
 
 import type { AcademicSubject } from "../types/AcademicSubject";
@@ -26,6 +26,7 @@ export type PendingStatusChange = {
 
 /** Aplica el cambio y ajusta en cadena lo que deje de cumplir correlativas. */
 function applyChange(
+  subjects: AcademicSubject[],
   progress: Progress,
   subject: AcademicSubject,
   nextStatus: SubjectStatus
@@ -39,7 +40,7 @@ function applyChange(
   return enforcePrerequisites(next, subjects, subject.id).progress;
 }
 
-function availableIds(progress: Progress) {
+function availableIds(subjects: AcademicSubject[], progress: Progress) {
   return new Set(
     subjects
       .filter(
@@ -52,7 +53,20 @@ function availableIds(progress: Progress) {
 }
 
 export function usePlanner() {
+  const careerId = useAcademicProgressStore((state) => state.careerId);
+  const career = getCareer(careerId);
+  const { subjects } = career;
+
   const progress = useAcademicProgressStore((state) => state.progress);
+  const grades = useAcademicProgressStore((state) => state.grades);
+  const planned = useAcademicProgressStore((state) => state.planned);
+  const setCareerInStore = useAcademicProgressStore((state) => state.setCareer);
+  const setGrade = useAcademicProgressStore((state) => state.setGrade);
+  const pace = useAcademicProgressStore((state) => state.pace);
+  const setPlannedTerm = useAcademicProgressStore((state) => state.setPlannedTerm);
+  const replacePlan = useAcademicProgressStore((state) => state.replacePlan);
+  const setPace = useAcademicProgressStore((state) => state.setPace);
+  const replaceCareerRecord = useAcademicProgressStore((state) => state.replaceCareerRecord);
   const updateSubjectStatus = useAcademicProgressStore((state) => state.updateSubjectStatus);
   const replaceProgress = useAcademicProgressStore((state) => state.replaceProgress);
   const resetProgress = useAcademicProgressStore((state) => state.resetProgress);
@@ -100,7 +114,7 @@ export function usePlanner() {
       subjects.map((subject) =>
         buildSubjectViewModel(subject, subjects, activeProgress)
       ),
-    [activeProgress]
+    [activeProgress, subjects]
   );
 
   const simulationChangesCount = useMemo(() => {
@@ -113,7 +127,7 @@ export function usePlanner() {
         (progress[subject.id] ?? "pending") !==
         (simulationProgress[subject.id] ?? "pending")
     ).length;
-  }, [isSimulationMode, progress, simulationProgress]);
+  }, [isSimulationMode, progress, simulationProgress, subjects]);
 
   const showToast = (
     type: ToastMessage["type"],
@@ -134,7 +148,7 @@ export function usePlanner() {
       return false;
     }
 
-    setSimulationProgress(applyChange(simulationProgress, subject, nextStatus));
+    setSimulationProgress(applyChange(subjects, simulationProgress, subject, nextStatus));
 
     return true;
   };
@@ -174,8 +188,8 @@ export function usePlanner() {
     }
 
     const snapshot = activeProgress;
-    const before = availableIds(activeProgress);
-    const after = availableIds(applyChange(activeProgress, subject, nextStatus));
+    const before = availableIds(subjects, activeProgress);
+    const after = availableIds(subjects, applyChange(subjects, activeProgress, subject, nextStatus));
     const unlocked = subjects.filter(
       (candidate) => after.has(candidate.id) && !before.has(candidate.id)
     );
@@ -281,8 +295,33 @@ export function usePlanner() {
     );
   };
 
+  const setCareer = (nextCareerId: string) => {
+    if (nextCareerId === careerId) {
+      return;
+    }
+
+    setIsSimulationMode(false);
+    setSimulationProgress({});
+    setPendingStatusChange(null);
+    setToast(null);
+    setCareerInStore(nextCareerId);
+  };
+
   return {
+    career,
+    subjects,
+    setCareer,
     progress,
+    grades,
+    planned,
+    pace,
+    record: { progress, grades, planned, pace },
+    setGrade,
+    setPlannedTerm,
+    replacePlan,
+    setPace,
+    replaceCareerRecord,
+    notify: showToast,
     activeProgress,
     viewModels,
     isSimulationMode,

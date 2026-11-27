@@ -1,5 +1,6 @@
 import type { SubjectViewModel } from "../../utils/subjectView";
 
+import { formatGrade } from "../../utils/grades";
 import {
   displayStatusOrder,
   getDisplayStatus,
@@ -12,6 +13,7 @@ type CareerMapProps = {
   /** Materia que más materias traba, se resalta en el mapa. */
   keySubjectId: string | null;
   keySubjectLabel: string | null;
+  grades: Record<string, number>;
 };
 
 const semesters = [1, 2] as const;
@@ -21,6 +23,7 @@ export default function CareerMap({
   viewModels,
   keySubjectId,
   keySubjectLabel,
+  grades,
 }: CareerMapProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -36,7 +39,7 @@ export default function CareerMap({
         ))}
       </ul>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className={`grid gap-4 ${years.length > 3 ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
         {years.map((year) => {
           const yearViewModels = viewModels.filter(
             (viewModel) => viewModel.subject.year === year
@@ -79,8 +82,11 @@ export default function CareerMap({
                                 isKey ? "outline outline-2 outline-offset-2 outline-[#7B1730]" : ""
                               }`}
                             >
-                              <span className="text-[11px] font-semibold opacity-80">
-                                Cód. {viewModel.subject.code}
+                              <span className="flex justify-between gap-2 text-[11px] font-semibold opacity-80">
+                                <span>Cód. {viewModel.subject.code}</span>
+                                {status === "passed" && grades[viewModel.subject.id] !== undefined && (
+                                  <span>Nota {formatGrade(grades[viewModel.subject.id])}</span>
+                                )}
                               </span>
                               <span className="text-[13px] font-semibold leading-tight">
                                 {viewModel.subject.name}

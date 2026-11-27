@@ -4,8 +4,17 @@ import {
   type ReactNode,
 } from "react";
 
+type CareerOption = {
+  id: string;
+  name: string;
+  plan: string;
+};
+
 type AppLayoutProps = {
   children: ReactNode;
+  careers: CareerOption[];
+  activeCareerId: string;
+  onCareerChange: (careerId: string) => void;
 };
 
 type NavigationItem = {
@@ -27,9 +36,10 @@ const navigationGroups: NavigationGroup[] = [
     ],
   },
   {
-    title: "Carrera",
+    title: "Plan",
     items: [
       { label: "Plan de estudios", href: "#plan-academico" },
+      { label: "Planificar", href: "#planificar" },
       { label: "Herramientas", href: "#herramientas" },
     ],
   },
@@ -44,6 +54,9 @@ const sectionIds = navigationGroups.flatMap(
 
 export default function AppLayout({
   children,
+  careers,
+  activeCareerId,
+  onCareerChange,
 }: AppLayoutProps) {
   const [
     isMobileMenuOpen,
@@ -206,6 +219,55 @@ export default function AppLayout({
     </div>
   );
 
+  const renderCareerSwitcher = (mobile = false) => (
+    <section aria-labelledby={mobile ? "career-switcher-mobile" : "career-switcher"}>
+      <p
+        id={mobile ? "career-switcher-mobile" : "career-switcher"}
+        className="mb-2 px-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/40"
+      >
+        Tu carrera
+      </p>
+
+      <div className="space-y-1">
+        {careers.map((option) => {
+          const isActive = option.id === activeCareerId;
+
+          return (
+            <button
+              key={option.id}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => {
+                onCareerChange(option.id);
+                window.scrollTo({ top: 0 });
+                if (mobile) closeMobileMenu();
+              }}
+              className={`flex min-h-11 w-full items-start gap-3 rounded-lg px-4 py-2.5 text-left transition ${
+                isActive ? "bg-white text-[#7B1730]" : "text-white/75 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className={`mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${
+                  isActive ? "border-[#7B1730]" : "border-white/50"
+                }`}
+              >
+                {isActive && <span className="h-1.5 w-1.5 rounded-full bg-[#7B1730]" />}
+              </span>
+
+              <span className="flex flex-col">
+                <span className="text-sm font-bold leading-snug">{option.name}</span>
+                <span className={`text-xs ${isActive ? "text-[#7B1730]/70" : "text-white/50"}`}>
+                  Plan {option.plan}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+
   return (
     <div className="min-h-screen bg-zinc-50">
       {/* Navegación de escritorio */}
@@ -224,9 +286,9 @@ export default function AppLayout({
             className="h-11 w-11 rounded-xl ring-1 ring-white/20"
           />
 
-          <h1 className="mt-5 text-xl font-black">
+          <p className="mt-5 text-xl font-black">
             UAI Planner
-          </h1>
+          </p>
 
           <p className="mt-1 text-sm leading-5 text-white/55">
             Tu trayectoria académica,
@@ -240,7 +302,10 @@ export default function AppLayout({
           aria-label="Navegación principal"
           className="flex-1 px-4 py-6"
         >
-          {renderNavigation()}
+          <div className="space-y-7">
+            {renderCareerSwitcher()}
+            {renderNavigation()}
+          </div>
         </nav>
 
         <div className="mx-5 border-t border-white/10" />
@@ -270,8 +335,8 @@ export default function AppLayout({
               UAI Planner
             </p>
 
-            <p className="text-xs text-zinc-500">
-              Planificador académico
+            <p className="max-w-[60vw] truncate text-xs text-zinc-500">
+              {careers.find((option) => option.id === activeCareerId)?.name ?? "Planificador académico"}
             </p>
           </div>
         </div>
@@ -352,7 +417,10 @@ export default function AppLayout({
           aria-label="Navegación móvil"
           className="flex-1 px-4 py-6"
         >
-          {renderNavigation(true)}
+          <div className="space-y-7">
+            {renderCareerSwitcher(true)}
+            {renderNavigation(true)}
+          </div>
         </nav>
 
         <div className="mx-5 border-t border-white/10" />

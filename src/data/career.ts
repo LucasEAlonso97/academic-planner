@@ -1,10 +1,23 @@
-import careerJson from "./analista-sistemas.json";
+import analistaSistemas from "./analista-sistemas.json";
+import periodismo from "./periodismo.json";
 
 import type { CareerData } from "../types/AcademicSubject";
 
-// Punto único de acceso al plan de estudios.
-// Para sumar otra carrera alcanza con otro JSON
-// y un selector que elija cuál exportar acá.
-export const career = careerJson as CareerData;
+/**
+ * Carreras disponibles. Para sumar una nueva alcanza con agregar su
+ * JSON acá (mismo formato que los existentes).
+ */
+export const careers: CareerData[] = [
+  analistaSistemas as CareerData,
+  periodismo as CareerData,
+];
 
-export const subjects = career.subjects;
+export const DEFAULT_CAREER_ID = careers[0].career.id;
+
+export function getCareer(careerId: string): CareerData {
+  return careers.find((career) => career.career.id === careerId) ?? careers[0];
+}
+
+export function isKnownCareer(careerId: unknown): careerId is string {
+  return careers.some((career) => career.career.id === careerId);
+}

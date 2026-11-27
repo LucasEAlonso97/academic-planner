@@ -17,6 +17,8 @@ type YearSectionProps = {
   forceOpen: boolean;
   note?: string | null;
   onStatusChange: (subject: AcademicSubject, status: SubjectStatus) => boolean;
+  grades: Record<string, number>;
+  onGradeChange: (subjectId: string, grade: number | null) => void;
 };
 
 const semesters = [1, 2] as const;
@@ -30,6 +32,8 @@ export default function YearSection({
   forceOpen,
   note,
   onStatusChange,
+  grades,
+  onGradeChange,
 }: YearSectionProps) {
   const [isOpenByUser, setIsOpenByUser] = useState(defaultOpen);
   const isOpen = forceOpen || isOpenByUser;
@@ -104,6 +108,8 @@ export default function YearSection({
                       viewModel={viewModel}
                       allSubjects={allSubjects}
                       onStatusChange={onStatusChange}
+                      grade={grades[viewModel.subject.id]}
+                      onGradeChange={onGradeChange}
                     />
                   ))}
                 </ul>

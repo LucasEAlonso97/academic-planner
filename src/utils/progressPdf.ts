@@ -4,9 +4,10 @@ import { PDFDocument } from "pdf-lib";
 import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 
+import { formatGrade, summarizeGrades } from "./grades";
 import {
-  enforcePrerequisites,
-  sanitizeProgress,
+  sanitizeCareerRecord,
+  type CareerRecord,
 } from "./progressValidation";
 
 const BACKUP_PREFIX = "UAI_PLANNER_BACKUP_V1:";
@@ -19,19 +20,23 @@ const statusLabels: Record<SubjectStatus, string> = {
   passed: "Aprobada",
 };
 
+// v1: solo progreso. v2: suma notas, plan de cuatrimestres y ritmo.
 type ProgressPdfBackup = {
   app: "uai-planner";
-  version: 1;
+  version: 1 | 2;
   plan: string;
   exportedAt: string;
   progress: Record<string, SubjectStatus>;
+  grades?: Record<string, number>;
+  planned?: Record<string, string>;
+  pace?: number;
 };
 
 type ExportProgressPdfOptions = {
   careerName: string;
   plan: string;
   subjects: AcademicSubject[];
-  progress: Record<string, SubjectStatus>;
+  record: CareerRecord;
 };
 
 function encodeBase64(value: string): string {
@@ -78,16 +83,20 @@ export function exportProgressToPdf({
   careerName,
   plan,
   subjects,
-  progress,
+  record,
 }: ExportProgressPdfOptions): void {
   const exportedAt = new Date();
+  const { progress, grades } = record;
 
   const backup: ProgressPdfBackup = {
     app: "uai-planner",
-    version: 1,
+    version: 2,
     plan,
     exportedAt: exportedAt.toISOString(),
     progress,
+    grades: record.grades,
+    planned: record.planned,
+    pace: record.pace,
   };
 
   const encodedBackup = encodeBase64(
@@ -216,14 +225,20 @@ export function exportProgressToPdf({
     },
   ];
 
+  const { average } = summarizeGrades(subjects, progress, grades);
+
+  if (average !== null) {
+    summaryItems.push({ label: "Promedio", value: formatGrade(average) });
+  }
+
   const cardGap = 4;
 
   const cardWidth =
     (pageWidth -
       leftMargin -
       rightMargin -
-      cardGap * 3) /
-    4;
+      cardGap * (summaryItems.length - 1)) /
+    summaryItems.length;
 
   summaryItems.forEach((item, index) => {
     const cardX =
@@ -263,7 +278,9 @@ export function exportProgressToPdf({
 
   cursorY += 36;
 
-  const years = [1, 2, 3] as const;
+  const years = [...new Set(subjects.map((subject) => subject.year))].sort(
+    (first, second) => first - second
+  );
   const semesters = [1, 2] as const;
 
   years.forEach((year) => {
@@ -365,8 +382,12 @@ export function exportProgressToPdf({
         document.setFont("helvetica", "bold");
         document.setFontSize(8);
 
+        const grade = grades[subject.id];
+
         document.text(
-          statusLabels[status],
+          status === "passed" && grade !== undefined
+            ? `${statusLabels[status]} · ${formatGrade(grade)}`
+            : statusLabels[status],
           pageWidth - rightMargin - 4,
           cursorY + 1,
           {
@@ -444,7 +465,7 @@ export async function importProgressFromPdf(
   file: File,
   expectedPlan: string,
   subjects: AcademicSubject[]
-): Promise<Record<string, SubjectStatus>> {
+): Promise<CareerRecord> {
   const looksLikePdf =
     file.type === "application/pdf" ||
     file.name.toLowerCase().endsWith(".pdf");
@@ -503,7 +524,7 @@ export async function importProgressFromPdf(
 
   if (
     backup.app !== "uai-planner" ||
-    backup.version !== 1
+    (backup.version !== 1 && backup.version !== 2)
   ) {
     throw new Error(
       "La versión de este respaldo no es compatible."
@@ -525,10 +546,15 @@ export async function importProgressFromPdf(
     );
   }
 
-  // Solo materias del plan con estados válidos, y coherentes
+  // Solo materias del plan con datos válidos, y coherentes
   // con las correlativas.
-  return enforcePrerequisites(
-    sanitizeProgress(backup.progress, subjects),
+  return sanitizeCareerRecord(
+    {
+      progress: backup.progress,
+      grades: backup.grades,
+      planned: backup.planned,
+      pace: backup.pace,
+    },
     subjects
-  ).progress;
+  ).record;
 }
