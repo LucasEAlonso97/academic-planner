@@ -1,0 +1,514 @@
+# cargado: 2026-11-27
+ABOGACÍA - PLAN: J1-22
+Títulos
+Abogado
+R.M.Nº 1782/22, UAI - LOMAS
+DNGU NO-2022-44088150, UAI - CENTRO
+R.M.Nº 473/22, UAI - NORTE
+DNGU NO-2022-29813906, UAI - CASTELAR
+R.M.Nº 1812/22, UAI - BERAZATEGUI
+R.M.Nº 1716/22, UAI - REGIONAL ROSARIO
+Procurador
+1er Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+01
+
+INTRODUCCIÓN AL DERECHO
+
+
+64
+
+02
+
+PROBLEMÁTICA DEL MUNDO ACTUAL
+
+
+32
+
+03
+
+TEORÍA DE LA PERSONA Y DEL HECHO JURÍDICO
+
+
+64
+
+04
+
+GARANTÍAS CONSTITUCIONALES Y DERECHOS HUMANOS
+
+
+64
+
+05
+
+TALLER DE INFORMÁTICA I
+
+
+32
+
+1er Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+06
+
+DERECHO PENAL I
+
+04
+
+64
+
+07
+
+DERECHO EXTRA PATRIMONIAL DE FAMILIA
+
+03
+
+64
+
+08
+
+DERECHO CONSTITUCIONAL, REPRESENTACIÓN POLÍTICA Y ÓRGANOS DE GOBIERNO
+
+
+64
+
+09
+
+SUJETO Y SOCIEDAD
+
+
+48
+
+10
+
+TALLER DE INFORMÁTICA II
+
+05
+
+32
+
+2do Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+11
+
+DERECHO ROMANO
+
+
+48
+
+12
+
+DERECHO PENAL II
+
+06
+
+64
+
+13
+
+TEORÍA GENERAL DE LAS OBLIGACIONES
+
+03
+
+64
+
+14
+
+INTRODUCCIÓN AL PENSAMIENTO CIENTÍFICO
+
+
+48
+
+15
+
+DERECHO PROCESAL. PARTE GENERAL
+
+
+64
+
+2do Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+16
+
+MEDIOS ALTERNATIVOS DE RESOLUCIÓN DE CONFLICTOS
+
+15
+
+48
+
+17
+
+DERECHO DE DAÑOS
+
+13
+
+48
+
+18
+
+TEORÍA DEL DERECHO
+
+
+48
+
+19
+
+DERECHO POLÍTICO
+
+
+48
+
+20
+
+DERECHO, LITERATURA Y LENGUAJE
+
+
+48
+
+21
+
+OPTATIVA
+
+
+32
+
+3er Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+22
+
+DERECHO PROCESAL CIVIL Y COMERCIAL
+
+15
+
+64
+
+23
+
+DERECHO ADMINISTRATIVO I
+
+08
+
+64
+
+24
+
+TEORÍA GENERAL E INTERPRETACIÓN DE LOS CONTRATOS
+
+13
+
+64
+
+25
+
+NOCIONES DE DERECHO COMERCIAL
+
+03
+
+64
+
+26
+
+INGLÉS I
+
+
+32
+
+3er Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+27
+
+DERECHO PROCESAL PENAL
+
+12
+
+48
+
+28
+
+CONTRATOS. PARTE ESPECIAL
+
+24
+
+64
+
+29
+
+DERECHO DE TRABAJO
+
+04
+
+64
+
+30
+
+DERECHO ADMINISTRATIVO II
+
+23
+
+48
+
+31
+
+INGLÉS II
+
+26
+
+32
+
+32
+
+TALLER DE INTEGRACIÓN: CLÍNICA JURÍDICA I
+
+12 24 25
+
+32
+
+Título: Procurador
+4to Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+33
+
+DERECHOS REALES I
+
+24
+
+48
+
+34
+
+ECONOMÍA POLÍTICA
+
+
+48
+
+35
+
+INTERPRETACIÓN DEL DERECHO
+
+01
+
+32
+
+36
+
+DERECHO DE LA SEGURIDAD SOCIAL
+
+29
+
+32
+
+37
+
+INSTITUCIONES JURÍDICAS ARGENTINAS CONTEMPORÁNEAS
+
+
+32
+
+38
+
+ORALIDAD EN LOS PROCESOS
+
+22 27
+
+48
+
+39
+
+DERECHO SOCIETARIO Y CARTULAR
+
+25
+
+48
+
+4to Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+40
+
+DERECHO INTERNACIONAL PÚBLICO
+
+04
+
+64
+
+41
+
+CONCURSOS Y QUIEBRAS
+
+39
+
+48
+
+42
+
+DERECHOS REALES II
+
+33
+
+48
+
+43
+
+METODOLOGÍA DE LA INVESTIGACIÓN JURÍDICA
+
+14
+
+32
+
+44
+
+ARGUMENTACIÓN JURÍDICA
+
+
+32
+
+45
+
+DEBERES DEL ABOGADO
+
+
+32
+
+46
+
+TALLER DE INTEGRACIÓN: CLÍNICA JURÍDICA II
+
+28 29 30
+
+32
+
+5to Año
+Materias anuales
+Código
+Asignatura
+Correlativas
+Carga
+50
+
+PRÁCTICA PROFESIONAL SUPERVISADA
+
+46
+
+200
+
+5to Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+51
+
+TALLER DE TRABAJO FINAL I
+
+43
+
+32
+
+47
+
+DERECHO PATRIMONIAL DE FAMILIA
+
+07 42
+
+64
+
+48
+
+DERECHO FINANCIERO Y TRIBUTARIO
+
+08
+
+48
+
+49
+
+RÉGIMEN LEGAL DE LOS RECURSOS NATURALES
+
+42
+
+64
+
+5to Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+52
+
+FILOSOFÍA DEL DERECHO
+
+18
+
+48
+
+53
+
+DERECHO INTERNACIONAL PRIVADO
+
+47
+
+64
+
+54
+
+DERECHO AMBIENTAL Y DESARROLLO SUSTENTABLE
+
+49
+
+48
+
+55
+
+DERECHO SUCESORIO
+
+47
+
+48
+
+56
+
+TALLER DE TRABAJO FINAL II
+
+51
+
+32
+
+57
+
+TRABAJO FINAL
+
+01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56
+
+0

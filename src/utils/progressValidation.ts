@@ -11,6 +11,12 @@ export type Grades = Record<string, number>;
 /** Cuatrimestre planificado para cada materia, como "2027-1". */
 export type PlannedTerms = Record<string, string>;
 
+/** Materias aprobadas por equivalencia. */
+export type Equivalences = Record<string, true>;
+
+/** Nombre que la persona le puso a cada optativa. */
+export type CustomNames = Record<string, string>;
+
 /** Todo lo que se guarda de una carrera. */
 export type CareerRecord = {
   progress: Progress;
@@ -18,7 +24,14 @@ export type CareerRecord = {
   planned: PlannedTerms;
   /** Materias por cuatrimestre para el armado automático del plan. */
   pace: number;
+  equivalences: Equivalences;
+  customNames: CustomNames;
 };
+
+export const MAX_CUSTOM_NAME = 60;
+
+/** Las optativas son las únicas materias a las que se les puede poner nombre. */
+export const isElective = (subject: AcademicSubject) => /^optativa\b/i.test(subject.name);
 
 export const MIN_GRADE = 4;
 export const MAX_GRADE = 10;
@@ -187,12 +200,24 @@ export function sanitizeCareerRecord(
       ? source.pace
       : 5;
 
+  const electives = subjects.filter(isElective);
+  const customNames = pickValid(
+    source.customNames,
+    electives,
+    (value): value is string =>
+      typeof value === "string" && value.trim().length > 0 && value.trim().length <= MAX_CUSTOM_NAME
+  );
+
   return {
     record: {
       progress,
       grades: pickValid(source.grades, subjects, isValidGrade),
       planned: pickValid(source.planned, subjects, isValidTerm),
       pace,
+      equivalences: pickValid(source.equivalences, subjects, (value): value is true => value === true),
+      customNames: Object.fromEntries(
+        Object.entries(customNames).map(([id, name]) => [id, name.trim()])
+      ),
     },
     adjusted,
   };

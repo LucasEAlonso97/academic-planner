@@ -5,6 +5,7 @@ import type { SubjectStatus } from "../../types/SubjectProgress";
 import type { SubjectViewModel } from "../../utils/subjectView";
 
 import SubjectRow from "./SubjectRow";
+import { periodGroups } from "../../utils/subjectPeriods";
 
 type YearSectionProps = {
   year: number;
@@ -19,9 +20,12 @@ type YearSectionProps = {
   onStatusChange: (subject: AcademicSubject, status: SubjectStatus) => boolean;
   grades: Record<string, number>;
   onGradeChange: (subjectId: string, grade: number | null) => void;
+  equivalences: Record<string, true>;
+  onEquivalenceChange: (subjectId: string, isEquivalence: boolean) => void;
+  customNames: Record<string, string>;
+  onCustomNameChange: (subjectId: string, name: string | null) => void;
 };
 
-const semesters = [1, 2] as const;
 
 export default function YearSection({
   year,
@@ -34,6 +38,10 @@ export default function YearSection({
   onStatusChange,
   grades,
   onGradeChange,
+  equivalences,
+  onEquivalenceChange,
+  customNames,
+  onCustomNameChange,
 }: YearSectionProps) {
   const [isOpenByUser, setIsOpenByUser] = useState(defaultOpen);
   const isOpen = forceOpen || isOpenByUser;
@@ -86,9 +94,9 @@ export default function YearSection({
 
       {isOpen && (
         <div id={panelId} className="border-t border-zinc-100 px-4 pb-2 sm:px-5">
-          {semesters.map((semester) => {
-            const semesterViewModels = viewModels.filter(
-              (viewModel) => viewModel.subject.semester === semester
+          {periodGroups.map((period) => {
+            const semesterViewModels = viewModels.filter((viewModel) =>
+              period.matches(viewModel.subject)
             );
 
             if (semesterViewModels.length === 0) {
@@ -96,9 +104,9 @@ export default function YearSection({
             }
 
             return (
-              <div key={semester}>
+              <div key={period.key}>
                 <h4 className="pb-1 pt-4 text-xs font-bold uppercase tracking-wider text-zinc-500">
-                  {semester}° cuatrimestre
+                  {period.label}
                 </h4>
 
                 <ul>
@@ -110,6 +118,10 @@ export default function YearSection({
                       onStatusChange={onStatusChange}
                       grade={grades[viewModel.subject.id]}
                       onGradeChange={onGradeChange}
+                      isEquivalence={Boolean(equivalences[viewModel.subject.id])}
+                      onEquivalenceChange={onEquivalenceChange}
+                      customName={customNames[viewModel.subject.id]}
+                      onCustomNameChange={onCustomNameChange}
                     />
                   ))}
                 </ul>

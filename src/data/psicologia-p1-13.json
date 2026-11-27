@@ -1,0 +1,611 @@
+{
+  "career": {
+    "id": "psicologia-p1-13",
+    "name": "Licenciatura en Psicología",
+    "shortName": "Psicología",
+    "degree": "Licenciatura",
+    "plan": "P1-13",
+    "years": 5,
+    "titles": [
+      {
+        "name": "Licenciado en Psicología",
+        "years": 5
+      }
+    ],
+    "source": {
+      "loadedAt": "2026-11-27"
+    }
+  },
+  "subjects": [
+    {
+      "id": "teorias-y-sistemas-psicologicos-i",
+      "code": 1,
+      "name": "Teorías y Sistemas Psicológicos I",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "procesos-psicologicos-basicos-i",
+      "code": 2,
+      "name": "Procesos Psicológicos Básicos I",
+      "year": 1,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "bases-biologicas-y-neurologicas-del-comportamiento",
+      "code": 3,
+      "name": "Bases Biológicas y Neurológicas del Comportamiento",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "filosofia",
+      "code": 4,
+      "name": "Filosofía",
+      "year": 1,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "taller-de-informatica-i",
+      "code": 5,
+      "name": "Taller de Informática I",
+      "year": 1,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "teorias-y-sistemas-psicologicos-ii",
+      "code": 6,
+      "name": "Teorías y Sistemas Psicológicos II",
+      "year": 1,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "teorias-y-sistemas-psicologicos-i"
+      ]
+    },
+    {
+      "id": "procesos-psicologicos-basicos-ii",
+      "code": 7,
+      "name": "Procesos Psicológicos Básicos II",
+      "year": 1,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "procesos-psicologicos-basicos-i"
+      ]
+    },
+    {
+      "id": "neuropsicologia",
+      "code": 8,
+      "name": "Neuropsicología",
+      "year": 1,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "bases-biologicas-y-neurologicas-del-comportamiento"
+      ]
+    },
+    {
+      "id": "problematica-del-mundo-actual",
+      "code": 9,
+      "name": "Problemática del Mundo Actual",
+      "year": 1,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "semiologia-y-comunicacion-humana",
+      "code": 10,
+      "name": "Semiología y Comunicación Humana",
+      "year": 1,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "taller-de-informatica-ii",
+      "code": 11,
+      "name": "Taller de Informática II",
+      "year": 1,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "taller-de-informatica-i"
+      ]
+    },
+    {
+      "id": "seminario-taller-de-integracion-i",
+      "code": 22,
+      "name": "Seminario-Taller de Integración I",
+      "year": 2,
+      "semester": 1,
+      "annual": true,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "psicoanalisis-i",
+      "code": 12,
+      "name": "Psicoanálisis I",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "psicologia-del-desarrollo-i",
+      "code": 13,
+      "name": "Psicología del Desarrollo I",
+      "year": 2,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "teorias-y-sistemas-psicologicos-ii"
+      ]
+    },
+    {
+      "id": "fundamentos-epistemologicos-y-metodologicos",
+      "code": 14,
+      "name": "Fundamentos Epistemológicos y Metodológicos",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "problematicas-sociologicas-y-antropologicas",
+      "code": 15,
+      "name": "Problemáticas Sociológicas y Antropológicas",
+      "year": 2,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "ingles-i",
+      "code": 16,
+      "name": "Inglés I",
+      "year": 2,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "psicoanalisis-ii",
+      "code": 17,
+      "name": "Psicoanálisis II",
+      "year": 2,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "psicoanalisis-i"
+      ]
+    },
+    {
+      "id": "psicologia-del-desarrollo-ii",
+      "code": 18,
+      "name": "Psicología del Desarrollo II",
+      "year": 2,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "psicologia-del-desarrollo-i"
+      ]
+    },
+    {
+      "id": "metodologia-disenos-cuantitativos",
+      "code": 19,
+      "name": "Metodología: Diseños Cuantitativos",
+      "year": 2,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "fundamentos-epistemologicos-y-metodologicos"
+      ]
+    },
+    {
+      "id": "estadistica-aplicada-a-la-psicologia",
+      "code": 20,
+      "name": "Estadística Aplicada a la Psicología",
+      "year": 2,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "fundamentos-epistemologicos-y-metodologicos"
+      ]
+    },
+    {
+      "id": "ingles-ii",
+      "code": 21,
+      "name": "Inglés II",
+      "year": 2,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "ingles-i"
+      ]
+    },
+    {
+      "id": "seminario-taller-de-integracion-ii",
+      "code": 32,
+      "name": "Seminario-Taller de Integración II",
+      "year": 3,
+      "semester": 1,
+      "annual": true,
+      "hours": 64,
+      "prerequisites": [
+        "metodologia-disenos-cuantitativos",
+        "estadistica-aplicada-a-la-psicologia"
+      ]
+    },
+    {
+      "id": "psicopatologia-i",
+      "code": 23,
+      "name": "Psicopatología I",
+      "year": 3,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "psicoanalisis-ii",
+        "psicologia-del-desarrollo-ii"
+      ]
+    },
+    {
+      "id": "psicoanalisis-iii-post-freudianos-y-contemporaneos",
+      "code": 24,
+      "name": "Psicoanálisis III: Post Freudianos y Contemporáneos",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "psicoanalisis-ii"
+      ]
+    },
+    {
+      "id": "psicologia-social",
+      "code": 25,
+      "name": "Psicología Social",
+      "year": 3,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "teoria-y-tecnica-de-grupos",
+      "code": 26,
+      "name": "Teoría y Técnica de Grupos",
+      "year": 3,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "psicopatologia-ii",
+      "code": 27,
+      "name": "Psicopatología II",
+      "year": 3,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "psicopatologia-i"
+      ]
+    },
+    {
+      "id": "psicopatologia-psicoanalitica",
+      "code": 28,
+      "name": "Psicopatología Psicoanalítica",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "psicoanalisis-iii-post-freudianos-y-contemporaneos"
+      ]
+    },
+    {
+      "id": "metodologia-disenos-cualitativos",
+      "code": 29,
+      "name": "Metodología: Diseños Cualitativos",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "fundamentos-epistemologicos-y-metodologicos"
+      ]
+    },
+    {
+      "id": "psicologia-comunitaria",
+      "code": 30,
+      "name": "Psicología Comunitaria",
+      "year": 3,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "psicologia-social"
+      ]
+    },
+    {
+      "id": "salud-publica-y-salud-mental",
+      "code": 31,
+      "name": "Salud Pública y Salud Mental",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "fundamentos-epistemologicos-y-metodologicos",
+        "psicopatologia-i"
+      ]
+    },
+    {
+      "id": "seminario-taller-de-integracion-iii",
+      "code": 41,
+      "name": "Seminario-Taller de Integración III",
+      "year": 4,
+      "semester": 1,
+      "annual": true,
+      "hours": 128,
+      "prerequisites": [
+        "seminario-taller-de-integracion-ii"
+      ]
+    },
+    {
+      "id": "tecnicas-de-exploracion-psicologica-i",
+      "code": 33,
+      "name": "Técnicas de Exploración Psicológica I",
+      "year": 4,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "psicopatologia-ii"
+      ]
+    },
+    {
+      "id": "clinica-de-ninos-y-adolescentes",
+      "code": 34,
+      "name": "Clínica de Niños y Adolescentes",
+      "year": 4,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "psicopatologia-ii"
+      ]
+    },
+    {
+      "id": "psicologia-educacional",
+      "code": 35,
+      "name": "Psicología Educacional",
+      "year": 4,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "psicologia-del-desarrollo-ii"
+      ]
+    },
+    {
+      "id": "psicofarmacologia",
+      "code": 36,
+      "name": "Psicofarmacología",
+      "year": 4,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "neuropsicologia",
+        "psicopatologia-ii"
+      ]
+    },
+    {
+      "id": "tecnicas-de-exploracion-psicologica-ii",
+      "code": 37,
+      "name": "Técnicas de Exploración Psicológica II",
+      "year": 4,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "tecnicas-de-exploracion-psicologica-i"
+      ]
+    },
+    {
+      "id": "clinica-de-adultos",
+      "code": 38,
+      "name": "Clínica de Adultos",
+      "year": 4,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "psicopatologia-ii"
+      ]
+    },
+    {
+      "id": "psicologia-institucional",
+      "code": 39,
+      "name": "Psicología Institucional",
+      "year": 4,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "psicologia-social"
+      ]
+    },
+    {
+      "id": "optativa-40",
+      "code": 40,
+      "name": "Optativa",
+      "year": 4,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "practica-profesional-supervisada",
+      "code": 49,
+      "name": "Práctica Profesional Supervisada",
+      "year": 5,
+      "semester": 1,
+      "annual": true,
+      "hours": 256,
+      "prerequisites": [
+        "clinica-de-ninos-y-adolescentes",
+        "psicologia-educacional",
+        "tecnicas-de-exploracion-psicologica-ii",
+        "clinica-de-adultos",
+        "psicologia-institucional"
+      ]
+    },
+    {
+      "id": "taller-de-tesis",
+      "code": 50,
+      "name": "Taller de Tesis",
+      "year": 5,
+      "semester": 1,
+      "annual": true,
+      "hours": 80,
+      "prerequisites": [
+        "seminario-taller-de-integracion-iii"
+      ]
+    },
+    {
+      "id": "tesis",
+      "code": 51,
+      "name": "Tesis",
+      "year": 5,
+      "semester": 1,
+      "annual": true,
+      "hours": 1,
+      "prerequisites": [
+        "teorias-y-sistemas-psicologicos-i",
+        "procesos-psicologicos-basicos-i",
+        "bases-biologicas-y-neurologicas-del-comportamiento",
+        "filosofia",
+        "taller-de-informatica-i",
+        "teorias-y-sistemas-psicologicos-ii",
+        "procesos-psicologicos-basicos-ii",
+        "neuropsicologia",
+        "problematica-del-mundo-actual",
+        "semiologia-y-comunicacion-humana",
+        "taller-de-informatica-ii",
+        "psicoanalisis-i",
+        "psicologia-del-desarrollo-i",
+        "fundamentos-epistemologicos-y-metodologicos",
+        "problematicas-sociologicas-y-antropologicas",
+        "ingles-i",
+        "psicoanalisis-ii",
+        "psicologia-del-desarrollo-ii",
+        "metodologia-disenos-cuantitativos",
+        "estadistica-aplicada-a-la-psicologia",
+        "ingles-ii",
+        "seminario-taller-de-integracion-i",
+        "psicopatologia-i",
+        "psicoanalisis-iii-post-freudianos-y-contemporaneos",
+        "psicologia-social",
+        "teoria-y-tecnica-de-grupos",
+        "psicopatologia-ii",
+        "psicopatologia-psicoanalitica",
+        "metodologia-disenos-cualitativos",
+        "psicologia-comunitaria",
+        "salud-publica-y-salud-mental",
+        "seminario-taller-de-integracion-ii",
+        "tecnicas-de-exploracion-psicologica-i",
+        "clinica-de-ninos-y-adolescentes",
+        "psicologia-educacional",
+        "psicofarmacologia",
+        "tecnicas-de-exploracion-psicologica-ii",
+        "clinica-de-adultos",
+        "psicologia-institucional",
+        "optativa-40",
+        "seminario-taller-de-integracion-iii",
+        "integracion-psicodiagnostica",
+        "metodos-y-tecnicas-psicoterapeuticas",
+        "psicologia-laboral-y-organizacional",
+        "optativa-45",
+        "orientacion-vocacional-y-profesional",
+        "psicologia-juridica-forense",
+        "etica-y-deontologia-profesional",
+        "practica-profesional-supervisada",
+        "taller-de-tesis"
+      ]
+    },
+    {
+      "id": "integracion-psicodiagnostica",
+      "code": 42,
+      "name": "Integración Psicodiagnóstica",
+      "year": 5,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "tecnicas-de-exploracion-psicologica-ii"
+      ]
+    },
+    {
+      "id": "metodos-y-tecnicas-psicoterapeuticas",
+      "code": 43,
+      "name": "Métodos y Técnicas Psicoterapéuticas",
+      "year": 5,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "clinica-de-adultos"
+      ]
+    },
+    {
+      "id": "psicologia-laboral-y-organizacional",
+      "code": 44,
+      "name": "Psicología Laboral y Organizacional",
+      "year": 5,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "psicologia-institucional"
+      ]
+    },
+    {
+      "id": "optativa-45",
+      "code": 45,
+      "name": "Optativa",
+      "year": 5,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "orientacion-vocacional-y-profesional",
+      "code": 46,
+      "name": "Orientación Vocacional y Profesional",
+      "year": 5,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "psicologia-educacional"
+      ]
+    },
+    {
+      "id": "psicologia-juridica-forense",
+      "code": 47,
+      "name": "Psicología Jurídica-Forense",
+      "year": 5,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "tecnicas-de-exploracion-psicologica-ii"
+      ]
+    },
+    {
+      "id": "etica-y-deontologia-profesional",
+      "code": 48,
+      "name": "Ética y Deontología Profesional",
+      "year": 5,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": []
+    }
+  ]
+}

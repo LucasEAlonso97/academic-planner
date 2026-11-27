@@ -46,3 +46,23 @@ describe("getNextSemesterPlan", () => {
     expect(plan.blockers[0].blocks).toHaveLength(6);
   });
 });
+
+describe("describePrerequisites con la materia que las pide", () => {
+  it("una tesis que pide toda la carrera dice 'Todas las demás materias'", () => {
+    const abogacia = getCareer("abogacia-j1-22").subjects;
+    const trabajoFinal = abogacia.find((subject) => subject.code === 57)!;
+
+    expect(describePrerequisites(trabajoFinal.prerequisites, abogacia, trabajoFinal)).toEqual([
+      "Todas las demás materias",
+    ]);
+  });
+
+  it("no le exige a una materia su propio año", () => {
+    const periodismo = getCareer("periodismo-i3-06").subjects;
+    const taller = periodismo.find((subject) => subject.code === 44)!;
+
+    expect(describePrerequisites(taller.prerequisites, periodismo, taller)).toEqual([
+      "Todas las demás materias",
+    ]);
+  });
+});

@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
-import { DEFAULT_CAREER_ID, getCareer, isKnownCareer } from "../data/career";
+import { getCareer, isKnownCareer } from "../data/career";
+
+import { loadStored, persist as persistData, removeLegacyStorage } from "./persistence";
 
 import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
@@ -10,6 +12,8 @@ import {
   enforcePrerequisites,
   sanitizeCareerRecord,
   type CareerRecord,
+  type CustomNames,
+  type Equivalences,
   type Grades,
   type PlannedTerms,
   type Progress,
@@ -22,6 +26,10 @@ type AcademicProgressStore = CareerRecord & {
   /** Materias que se ajustaron al cargar porque no cumplían correlativas. */
   startupAdjustments: StatusAdjustment[];
 
+  /** Primera visita: todavía no eligió carrera. */
+  isFirstVisit: boolean;
+
+  /** Cambia a una carrera ya descargada (ver `loadCareer`). */
   setCareer: (careerId: string) => void;
 
   /**
@@ -38,24 +46,18 @@ type AcademicProgressStore = CareerRecord & {
   replacePlan: (planned: PlannedTerms) => void;
   setPace: (pace: number) => void;
 
+  /** Marca o desmarca una aprobada como "por equivalencia". */
+  setEquivalence: (subjectId: string, isEquivalence: boolean) => void;
+
+  /** Nombre de una optativa; `null` lo borra. */
+  setCustomName: (subjectId: string, name: string | null) => void;
+
   replaceProgress: (progress: Progress) => void;
 
   /** Reemplaza todos los datos de una carrera (importación). */
   replaceCareerRecord: (careerId: string, record: Partial<CareerRecord>) => void;
 
   resetProgress: () => void;
-};
-
-const LEGACY_V1_KEY = "uai-planner-progress";
-const V2_KEY = "uai-planner:v2";
-
-// v3 guarda los datos de cada carrera por separado.
-const STORAGE_KEY = "uai-planner:v3";
-
-type StoredData = {
-  version: 3;
-  activeCareerId: string;
-  careers: Record<string, Partial<CareerRecord>>;
 };
 
 export const DEFAULT_PACE = 5;
@@ -65,81 +67,43 @@ const emptyRecord = (): CareerRecord => ({
   grades: {},
   planned: {},
   pace: DEFAULT_PACE,
+  equivalences: {},
+  customNames: {},
 });
-
-function readStorage(key: string): unknown {
-  try {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : null;
-  } catch {
-    return null;
-  }
-}
-
-function removeStorage(...keys: string[]) {
-  try {
-    keys.forEach((key) => localStorage.removeItem(key));
-  } catch {
-    // Ignorado.
-  }
-}
-
-let stored: StoredData = { version: 3, activeCareerId: DEFAULT_CAREER_ID, careers: {} };
-
-function persist() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
-  } catch {
-    // Modo privado o almacenamiento lleno: la app sigue
-    // funcionando, solo que el progreso no persiste.
-  }
-}
-
-/** Lee v3, o migra desde v2 / v1. */
-function loadStored(): StoredData {
-  const v3 = readStorage(STORAGE_KEY) as Partial<StoredData> | null;
-
-  if (v3 && v3.version === 3 && typeof v3.careers === "object" && v3.careers) {
-    return {
-      version: 3,
-      activeCareerId: isKnownCareer(v3.activeCareerId) ? v3.activeCareerId : DEFAULT_CAREER_ID,
-      careers: v3.careers,
-    };
-  }
-
-  const v2 = readStorage(V2_KEY) as { careerId?: string; progress?: unknown } | null;
-  const v1 = readStorage(LEGACY_V1_KEY);
-  const migrated: StoredData = { version: 3, activeCareerId: DEFAULT_CAREER_ID, careers: {} };
-
-  if (v2 && isKnownCareer(v2.careerId)) {
-    migrated.activeCareerId = v2.careerId;
-    migrated.careers[v2.careerId] = { progress: v2.progress as Progress };
-  } else if (v1) {
-    migrated.careers[DEFAULT_CAREER_ID] = { progress: v1 as Progress };
-  }
-
-  return migrated;
-}
 
 function loadRecord(careerId: string) {
   const { subjects } = getCareer(careerId);
   return sanitizeCareerRecord(stored.careers[careerId], subjects);
 }
 
-stored = loadStored();
+// main.tsx descarga la carrera activa antes de importar este módulo.
+const { isFirstVisit, ...storedData } = loadStored();
+const stored = storedData;
+const persist = () => persistData(stored);
 
 const initial = loadRecord(stored.activeCareerId);
 
 // Guarda la migración (o los ajustes) y limpia formatos viejos.
-stored.careers[stored.activeCareerId] = initial.record;
-persist();
-removeStorage(V2_KEY, LEGACY_V1_KEY);
+// En la primera visita no se guarda nada hasta que se elija carrera.
+if (!isFirstVisit) {
+  stored.careers[stored.activeCareerId] = initial.record;
+  persist();
+  removeLegacyStorage();
+}
 
 export const useAcademicProgressStore = create<AcademicProgressStore>((set, get) => {
   /** Guarda la carrera activa y actualiza el estado. */
   const save = (changes: Partial<CareerRecord>) => {
-    const { careerId, progress, grades, planned, pace } = get();
-    const record: CareerRecord = { progress, grades, planned, pace, ...changes };
+    const { careerId, progress, grades, planned, pace, equivalences, customNames } = get();
+    const record: CareerRecord = {
+      progress,
+      grades,
+      planned,
+      pace,
+      equivalences,
+      customNames,
+      ...changes,
+    };
 
     stored.careers[careerId] = record;
     stored.activeCareerId = careerId;
@@ -153,9 +117,19 @@ export const useAcademicProgressStore = create<AcademicProgressStore>((set, get)
     careerId: stored.activeCareerId,
     ...initial.record,
     startupAdjustments: initial.adjusted,
+    isFirstVisit,
 
     setCareer: (careerId) => {
-      if (!isKnownCareer(careerId) || careerId === get().careerId) {
+      if (!isKnownCareer(careerId)) {
+        return;
+      }
+
+      if (careerId === get().careerId) {
+        // En la primera visita, elegir la carrera que ya estaba también cuenta.
+        if (get().isFirstVisit) {
+          save({});
+          set({ isFirstVisit: false });
+        }
         return;
       }
 
@@ -165,7 +139,7 @@ export const useAcademicProgressStore = create<AcademicProgressStore>((set, get)
       stored.careers[careerId] = record;
       persist();
 
-      set({ careerId, ...record, startupAdjustments: [] });
+      set({ careerId, ...record, startupAdjustments: [], isFirstVisit: false });
     },
 
     updateSubjectStatus: (subject, status) => {
@@ -214,6 +188,31 @@ export const useAcademicProgressStore = create<AcademicProgressStore>((set, get)
 
     setPace: (pace) => save({ pace }),
 
+    setEquivalence: (subjectId, isEquivalence) => {
+      const equivalences: Equivalences = { ...get().equivalences };
+
+      if (isEquivalence) {
+        equivalences[subjectId] = true;
+      } else {
+        delete equivalences[subjectId];
+      }
+
+      save({ equivalences });
+    },
+
+    setCustomName: (subjectId, name) => {
+      const customNames: CustomNames = { ...get().customNames };
+      const trimmed = name?.trim() ?? "";
+
+      if (trimmed) {
+        customNames[subjectId] = trimmed;
+      } else {
+        delete customNames[subjectId];
+      }
+
+      save({ customNames });
+    },
+
     replaceProgress: (incomingProgress) => {
       const { record } = sanitizeCareerRecord(
         { ...get(), progress: incomingProgress },
@@ -234,9 +233,21 @@ export const useAcademicProgressStore = create<AcademicProgressStore>((set, get)
       stored.careers[careerId] = record;
       persist();
 
-      set({ careerId, ...record, startupAdjustments: [] });
+      set({ careerId, ...record, startupAdjustments: [], isFirstVisit: false });
     },
 
     resetProgress: () => save(emptyRecord()),
   };
 });
+
+/** Datos guardados de una carrera (ya descargada), aunque no sea la activa. */
+export function getStoredRecord(careerId: string): CareerRecord {
+  const state = useAcademicProgressStore.getState();
+
+  if (careerId === state.careerId) {
+    const { progress, grades, planned, pace, equivalences, customNames } = state;
+    return { progress, grades, planned, pace, equivalences, customNames };
+  }
+
+  return loadRecord(careerId).record;
+}

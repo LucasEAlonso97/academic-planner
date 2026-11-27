@@ -2,23 +2,60 @@ import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 import type { SubjectViewModel } from "./subjectView";
 
+import { flexibleSubjectIds } from "./subjectPeriods";
+
 const yearsOf = (subjects: AcademicSubject[]) =>
   [...new Set(subjects.map((subject) => subject.year))].sort();
 
+/** Materias que dependen (directa o indirectamente) de `subject`. */
+function dependentsOf(subject: AcademicSubject, allSubjects: AcademicSubject[]) {
+  const result = new Set<string>();
+  let changed = true;
+
+  while (changed) {
+    changed = false;
+
+    for (const candidate of allSubjects) {
+      if (
+        !result.has(candidate.id) &&
+        candidate.prerequisites.some((id) => id === subject.id || result.has(id))
+      ) {
+        result.add(candidate.id);
+        changed = true;
+      }
+    }
+  }
+
+  return result;
+}
+
 /**
- * Describe las correlativas de forma legible. Si una materia pide
- * un año entero, lo resume como "1° año completo" en lugar de
- * listar diez nombres.
+ * Describe las correlativas de forma legible. Si una materia pide un
+ * año entero, lo resume como "1° año completo" en lugar de listar diez
+ * nombres; si pide toda la carrera (una tesis), "Todas las demás materias".
+ *
+ * `forSubject` es la materia que pide las correlativas: sirve para no
+ * exigirle su propio año completo (ni lo que depende de ella).
  */
 export function describePrerequisites(
   prerequisiteIds: string[],
-  allSubjects: AcademicSubject[]
+  allSubjects: AcademicSubject[],
+  forSubject?: AcademicSubject
 ): string[] {
+  const excluded = forSubject
+    ? new Set([forSubject.id, ...dependentsOf(forSubject, allSubjects)])
+    : new Set<string>();
+  const relevant = allSubjects.filter((subject) => !excluded.has(subject.id));
   const remaining = new Set(prerequisiteIds);
+
+  if (forSubject && relevant.length > 10 && relevant.every((subject) => remaining.has(subject.id))) {
+    return ["Todas las demás materias"];
+  }
+
   const parts: string[] = [];
 
   for (const year of yearsOf(allSubjects)) {
-    const yearIds = allSubjects
+    const yearIds = relevant
       .filter((subject) => subject.year === year)
       .map((subject) => subject.id);
 
@@ -104,9 +141,10 @@ export function getNextSemesterPlan(
   nextSemester: 1 | 2,
   progress: Record<string, SubjectStatus>
 ): NextSemesterPlan {
+  const flexible = flexibleSubjectIds(viewModels.map((viewModel) => viewModel.subject));
   const inSemester = viewModels.filter(
     (viewModel) =>
-      viewModel.subject.semester === nextSemester &&
+      (viewModel.subject.semester === nextSemester || flexible.has(viewModel.subject.id)) &&
       viewModel.status === "pending"
   );
 

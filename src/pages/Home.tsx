@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import AppLayout from "../components/layout/AppLayout";
+import CareerPicker from "../components/common/CareerPicker";
+import PlanChangeCard from "../components/common/PlanChangeCard";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import InstallAppCard from "../components/common/InstallAppCard";
 import ProgressPdfActions from "../components/common/ProgressPdfActions";
@@ -14,18 +16,28 @@ import NextSemesterCallout from "../components/subject/NextSemesterCallout";
 import SubjectFilters, { type SubjectFilter } from "../components/subject/SubjectFilters";
 import YearSection from "../components/subject/YearSection";
 
-import { careers, getCareer, isKnownCareer } from "../data/career";
+import {
+  careerSummaries,
+  displayName,
+  getCareer,
+  getCareerSummary,
+  isKnownCareer,
+  loadCareer,
+} from "../data/career";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { useAcademicProgressStore } from "../store/useAcademicProgressStore";
 import { usePlanner } from "../hooks/usePlanner";
 
 import { getAcademicCalendar } from "../utils/academicCalendar";
 import { summarizeGrades } from "../utils/grades";
+import { track, trackOncePerSession } from "../utils/analytics";
 import { autoPlan, makeTerm } from "../utils/semesterPlanner";
 import {
   buildShareUrl,
   clearShareCodeFromUrl,
   decodeShareCode,
   encodeShareCode,
+  peekShareCareerId,
   readShareCodeFromUrl,
 } from "../utils/shareCode";
 import {
@@ -52,17 +64,33 @@ function normalizeSearchText(value: string) {
 
 type PlanView = "list" | "map";
 
-/** Si la página se abrió con un link de "Pasar a otro dispositivo". */
-function readLinkImport() {
+/** "2026-11-27" → "27/11/2026" */
+const formatDate = (isoDate: string) => isoDate.split("-").reverse().join("/");
+
+type LinkImport = NonNullable<ReturnType<typeof decodeShareCode>>;
+
+/**
+ * Si la página se abrió con un link de "Pasar a otro dispositivo":
+ * descarga la carrera del link y decodifica el progreso.
+ */
+async function readLinkImport(): Promise<LinkImport | null> {
   const code = readShareCodeFromUrl();
 
   if (!code) {
     return null;
   }
 
-  const decoded = decodeShareCode(code, (careerId) =>
-    isKnownCareer(careerId) ? getCareer(careerId).subjects : null
-  );
+  const careerId = peekShareCareerId(code);
+  let decoded: LinkImport | null = null;
+
+  if (careerId && isKnownCareer(careerId)) {
+    try {
+      await loadCareer(careerId);
+      decoded = decodeShareCode(code, (id) => (id === careerId ? getCareer(id).subjects : null));
+    } catch {
+      decoded = null;
+    }
+  }
 
   if (!decoded) {
     clearShareCodeFromUrl();
@@ -84,7 +112,32 @@ export default function Home() {
   const [planView, setPlanView] = useState<PlanView>("list");
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [isApplyDialogOpen, setIsApplyDialogOpen] = useState(false);
-  const [linkImport, setLinkImport] = useState(readLinkImport);
+  const [linkImport, setLinkImport] = useState<LinkImport | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void readLinkImport().then((result) => {
+      if (!cancelled) setLinkImport(result);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const isFirstVisit = useAcademicProgressStore((state) => state.isFirstVisit);
+  const [isFirstVisitAtStart] = useState(isFirstVisit);
+
+  // Qué carrera se usa: una vez por visita.
+  useEffect(() => {
+    if (!isFirstVisitAtStart) {
+      trackOncePerSession("uso", { carrera: career.career.id });
+    }
+  }, [career.career.id, isFirstVisitAtStart]);
+
+  // Si se entra con un link de "Pasar a otro dispositivo", primero va ese diálogo.
+  const showCareerPicker = isFirstVisit && linkImport === null && !readShareCodeFromUrl();
 
   const closeLinkImport = () => {
     clearShareCodeFromUrl();
@@ -107,6 +160,7 @@ export default function Home() {
     const previous = planner.planned;
 
     planner.replacePlan(autoPlan(subjects, planner.progress, planStart, planner.pace));
+    track("plan-automatico", { carrera: career.career.id, ritmo: planner.pace });
     planner.notify(
       "success",
       "Plan armado",
@@ -199,11 +253,18 @@ export default function Home() {
       return null;
     }
 
-    // Si hay correlativas que traban todo el año, nombramos solo esas.
-    const blockers = findBlockers(blocked, activeProgress);
-    const shared = blockers.filter((blocker) => blocker.blocks.length === blocked.length);
+    // Si hay correlativas que traban todo el año, las nombramos;
+    // si cada materia está trabada por algo distinto, no listamos nada.
+    const shared = findBlockers(blocked, activeProgress).filter(
+      (blocker) => blocker.blocks.length === blocked.length
+    );
+
+    if (shared.length === 0) {
+      return "Bloqueado por correlativas";
+    }
+
     const names = describePrerequisites(
-      (shared.length > 0 ? shared : blockers).map((blocker) => blocker.subject.id),
+      shared.map((blocker) => blocker.subject.id),
       subjects
     );
 
@@ -215,13 +276,13 @@ export default function Home() {
 
   return (
     <AppLayout
-      careers={careers.map(({ career: option }) => ({
+      careers={careerSummaries.map((option) => ({
         id: option.id,
-        name: option.shortName ?? option.name,
+        name: displayName(option),
         plan: option.plan,
       }))}
       activeCareerId={career.career.id}
-      onCareerChange={planner.setCareer}
+      onCareerChange={(careerId) => void planner.setCareer(careerId)}
     >
       <Toast toast={planner.toast} onClose={planner.closeToast} />
 
@@ -233,12 +294,12 @@ export default function Home() {
                 <span className="text-zinc-600">Carrera:</span>
                 <select
                   value={career.career.id}
-                  onChange={(event) => planner.setCareer(event.target.value)}
+                  onChange={(event) => void planner.setCareer(event.target.value)}
                   className="h-8 max-w-[70vw] cursor-pointer appearance-none truncate rounded-lg border border-[#F0DCE1] bg-[#FBF3F5] py-0 pl-2.5 pr-7 font-semibold text-[#7B1730] outline-none transition hover:border-[#E3C3CC] focus-visible:ring-2 focus-visible:ring-[#7B1730]/30"
                 >
-                  {careers.map(({ career: option }) => (
+                  {careerSummaries.map((option) => (
                     <option key={option.id} value={option.id}>
-                      {option.name}
+                      {displayName(option)} · Plan {option.plan}
                     </option>
                   ))}
                 </select>
@@ -249,6 +310,21 @@ export default function Home() {
               <span>
                 Plan {career.career.plan} · {subjects.length} materias
               </span>
+              {career.career.source?.loadedAt && (
+                <span className="font-medium text-zinc-500">
+                  · Cargado el {formatDate(career.career.source.loadedAt)}
+                </span>
+              )}
+              {career.career.source?.url && (
+                <a
+                  href={career.career.source.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-[#7B1730]/30 underline-offset-2 hover:decoration-[#7B1730]"
+                >
+                  Ver plan oficial ↗
+                </a>
+              )}
             </div>
 
             <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-zinc-950 sm:text-3xl">
@@ -284,13 +360,14 @@ export default function Home() {
           counts={counts}
           total={subjects.length}
           isSimulation={isSimulationMode}
-          gradeSummary={summarizeGrades(subjects, activeProgress, planner.grades)}
+          gradeSummary={summarizeGrades(subjects, activeProgress, planner.grades, planner.equivalences)}
         />
 
         <NextSemesterCallout
           periodLabel={periodLabel}
           semesterLabel={semesterLabel}
           plan={nextSemesterPlan}
+          customNames={planner.customNames}
         />
 
         <section
@@ -326,6 +403,8 @@ export default function Home() {
               viewModels={viewModels}
               keySubjectId={keyBlocker?.subject.id ?? null}
               grades={planner.grades}
+              equivalences={planner.equivalences}
+              customNames={planner.customNames}
               keySubjectLabel={
                 keyBlocker
                   ? `Traba ${pluralize(keyBlocker.blocks.length, "materia", "materias")}`
@@ -405,6 +484,10 @@ export default function Home() {
                         onStatusChange={planner.changeStatus}
                         grades={planner.grades}
                         onGradeChange={planner.setGrade}
+                        equivalences={planner.equivalences}
+                        onEquivalenceChange={planner.setEquivalence}
+                        customNames={planner.customNames}
+                        onCustomNameChange={planner.setCustomName}
                       />
                     );
                   })
@@ -426,6 +509,7 @@ export default function Home() {
           onAutoPlan={handleAutoPlan}
           onClearPlan={handleClearPlan}
           onPaceChange={planner.setPace}
+          customNames={planner.customNames}
         />
 
         <section
@@ -448,10 +532,31 @@ export default function Home() {
               />
             )}
 
+            {!isSimulationMode && (
+              <PlanChangeCard
+                currentCareerId={career.career.id}
+                subjects={subjects}
+                progress={planner.progress}
+                onApply={(careerId, record, applied) => {
+                  track("cambio-de-plan", { desde: career.career.id, hacia: careerId, materias: applied });
+                  planner.replaceCareerRecord(careerId, record);
+                  window.scrollTo({ top: 0 });
+                  planner.notify(
+                    "success",
+                    `Pasaste a ${displayName(getCareerSummary(careerId))}`,
+                    applied > 0
+                      ? `${pluralize(applied, "materia quedó", "materias quedaron")} aprobada${applied === 1 ? "" : "s"} por equivalencia.`
+                      : "No había materias con el mismo nombre."
+                  );
+                }}
+              />
+            )}
+
             <ShareProgressCard
-              buildLink={() =>
-                buildShareUrl(encodeShareCode(career.career.id, subjects, planner.record))
-              }
+              buildLink={() => {
+                track("qr-mostrado", { carrera: career.career.id });
+                return buildShareUrl(encodeShareCode(career.career.id, subjects, planner.record));
+              }}
             />
 
             <InstallAppCard />
@@ -546,7 +651,7 @@ export default function Home() {
             <div>
               <p>
                 El link trae el progreso de{" "}
-                <strong className="text-zinc-900">{getCareer(linkImport.careerId).career.name}</strong>:
+                <strong className="text-zinc-900">{getCareerSummary(linkImport.careerId).name}</strong>:
               </p>
 
               <dl className="mt-3 grid grid-cols-3 gap-2">
@@ -575,12 +680,16 @@ export default function Home() {
         onConfirm={() => {
           if (linkImport) {
             planner.replaceCareerRecord(linkImport.careerId, linkImport.record);
+            track("qr-importado", { carrera: linkImport.careerId });
             planner.notify("success", "Progreso copiado", "Ya tenés tu progreso en este dispositivo.");
           }
           closeLinkImport();
         }}
         onCancel={closeLinkImport}
       />
+      {showCareerPicker && (
+        <CareerPicker careers={careerSummaries} onPick={planner.setCareer} />
+      )}
     </AppLayout>
   );
 }

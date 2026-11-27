@@ -1,0 +1,674 @@
+{
+  "career": {
+    "id": "abogacia-j1-22",
+    "name": "Abogacía",
+    "plan": "J1-22",
+    "years": 5,
+    "titles": [
+      {
+        "name": "Procurador",
+        "years": 3
+      },
+      {
+        "name": "Abogado",
+        "years": 5
+      }
+    ],
+    "source": {
+      "loadedAt": "2026-11-27"
+    }
+  },
+  "subjects": [
+    {
+      "id": "introduccion-al-derecho",
+      "code": 1,
+      "name": "Introducción al Derecho",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "problematica-del-mundo-actual",
+      "code": 2,
+      "name": "Problemática del Mundo Actual",
+      "year": 1,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "teoria-de-la-persona-y-del-hecho-juridico",
+      "code": 3,
+      "name": "Teoría de la Persona y del Hecho Jurídico",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "garantias-constitucionales-y-derechos-humanos",
+      "code": 4,
+      "name": "Garantías Constitucionales y Derechos Humanos",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "taller-de-informatica-i",
+      "code": 5,
+      "name": "Taller de Informática I",
+      "year": 1,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "derecho-penal-i",
+      "code": 6,
+      "name": "Derecho Penal I",
+      "year": 1,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "garantias-constitucionales-y-derechos-humanos"
+      ]
+    },
+    {
+      "id": "derecho-extra-patrimonial-de-familia",
+      "code": 7,
+      "name": "Derecho Extra Patrimonial de Familia",
+      "year": 1,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "teoria-de-la-persona-y-del-hecho-juridico"
+      ]
+    },
+    {
+      "id": "derecho-constitucional-representacion-politica-y-organos-de-gobierno",
+      "code": 8,
+      "name": "Derecho Constitucional, Representación Política y Órganos de Gobierno",
+      "year": 1,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "sujeto-y-sociedad",
+      "code": 9,
+      "name": "Sujeto y Sociedad",
+      "year": 1,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "taller-de-informatica-ii",
+      "code": 10,
+      "name": "Taller de Informática II",
+      "year": 1,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "taller-de-informatica-i"
+      ]
+    },
+    {
+      "id": "derecho-romano",
+      "code": 11,
+      "name": "Derecho Romano",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "derecho-penal-ii",
+      "code": 12,
+      "name": "Derecho Penal II",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "derecho-penal-i"
+      ]
+    },
+    {
+      "id": "teoria-general-de-las-obligaciones",
+      "code": 13,
+      "name": "Teoría General de las Obligaciones",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "teoria-de-la-persona-y-del-hecho-juridico"
+      ]
+    },
+    {
+      "id": "introduccion-al-pensamiento-cientifico",
+      "code": 14,
+      "name": "Introducción al Pensamiento Científico",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "derecho-procesal-parte-general",
+      "code": 15,
+      "name": "Derecho Procesal. Parte General",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "medios-alternativos-de-resolucion-de-conflictos",
+      "code": 16,
+      "name": "Medios Alternativos de Resolución de Conflictos",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "derecho-procesal-parte-general"
+      ]
+    },
+    {
+      "id": "derecho-de-danos",
+      "code": 17,
+      "name": "Derecho de Daños",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "teoria-general-de-las-obligaciones"
+      ]
+    },
+    {
+      "id": "teoria-del-derecho",
+      "code": 18,
+      "name": "Teoría del Derecho",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "derecho-politico",
+      "code": 19,
+      "name": "Derecho Político",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "derecho-literatura-y-lenguaje",
+      "code": 20,
+      "name": "Derecho, Literatura y Lenguaje",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "optativa",
+      "code": 21,
+      "name": "Optativa",
+      "year": 2,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "derecho-procesal-civil-y-comercial",
+      "code": 22,
+      "name": "Derecho Procesal Civil y Comercial",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "derecho-procesal-parte-general"
+      ]
+    },
+    {
+      "id": "derecho-administrativo-i",
+      "code": 23,
+      "name": "Derecho Administrativo I",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "derecho-constitucional-representacion-politica-y-organos-de-gobierno"
+      ]
+    },
+    {
+      "id": "teoria-general-e-interpretacion-de-los-contratos",
+      "code": 24,
+      "name": "Teoría General e Interpretación de los Contratos",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "teoria-general-de-las-obligaciones"
+      ]
+    },
+    {
+      "id": "nociones-de-derecho-comercial",
+      "code": 25,
+      "name": "Nociones de Derecho Comercial",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "teoria-de-la-persona-y-del-hecho-juridico"
+      ]
+    },
+    {
+      "id": "ingles-i",
+      "code": 26,
+      "name": "Inglés I",
+      "year": 3,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "derecho-procesal-penal",
+      "code": 27,
+      "name": "Derecho Procesal Penal",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "derecho-penal-ii"
+      ]
+    },
+    {
+      "id": "contratos-parte-especial",
+      "code": 28,
+      "name": "Contratos. Parte Especial",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "teoria-general-e-interpretacion-de-los-contratos"
+      ]
+    },
+    {
+      "id": "derecho-de-trabajo",
+      "code": 29,
+      "name": "Derecho de Trabajo",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "garantias-constitucionales-y-derechos-humanos"
+      ]
+    },
+    {
+      "id": "derecho-administrativo-ii",
+      "code": 30,
+      "name": "Derecho Administrativo II",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "derecho-administrativo-i"
+      ]
+    },
+    {
+      "id": "ingles-ii",
+      "code": 31,
+      "name": "Inglés II",
+      "year": 3,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "ingles-i"
+      ]
+    },
+    {
+      "id": "taller-de-integracion-clinica-juridica-i",
+      "code": 32,
+      "name": "Taller de Integración: Clínica Jurídica I",
+      "year": 3,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "derecho-penal-ii",
+        "teoria-general-e-interpretacion-de-los-contratos",
+        "nociones-de-derecho-comercial"
+      ]
+    },
+    {
+      "id": "derechos-reales-i",
+      "code": 33,
+      "name": "Derechos Reales I",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "teoria-general-e-interpretacion-de-los-contratos"
+      ]
+    },
+    {
+      "id": "economia-politica",
+      "code": 34,
+      "name": "Economía Política",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "interpretacion-del-derecho",
+      "code": 35,
+      "name": "Interpretación del Derecho",
+      "year": 4,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": [
+        "introduccion-al-derecho"
+      ]
+    },
+    {
+      "id": "derecho-de-la-seguridad-social",
+      "code": 36,
+      "name": "Derecho de la Seguridad Social",
+      "year": 4,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": [
+        "derecho-de-trabajo"
+      ]
+    },
+    {
+      "id": "instituciones-juridicas-argentinas-contemporaneas",
+      "code": 37,
+      "name": "Instituciones Jurídicas Argentinas Contemporáneas",
+      "year": 4,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "oralidad-en-los-procesos",
+      "code": 38,
+      "name": "Oralidad en los Procesos",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "derecho-procesal-civil-y-comercial",
+        "derecho-procesal-penal"
+      ]
+    },
+    {
+      "id": "derecho-societario-y-cartular",
+      "code": 39,
+      "name": "Derecho Societario y Cartular",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "nociones-de-derecho-comercial"
+      ]
+    },
+    {
+      "id": "derecho-internacional-publico",
+      "code": 40,
+      "name": "Derecho Internacional Público",
+      "year": 4,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "garantias-constitucionales-y-derechos-humanos"
+      ]
+    },
+    {
+      "id": "concursos-y-quiebras",
+      "code": 41,
+      "name": "Concursos y Quiebras",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "derecho-societario-y-cartular"
+      ]
+    },
+    {
+      "id": "derechos-reales-ii",
+      "code": 42,
+      "name": "Derechos Reales II",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "derechos-reales-i"
+      ]
+    },
+    {
+      "id": "metodologia-de-la-investigacion-juridica",
+      "code": 43,
+      "name": "Metodología de la Investigación Jurídica",
+      "year": 4,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "introduccion-al-pensamiento-cientifico"
+      ]
+    },
+    {
+      "id": "argumentacion-juridica",
+      "code": 44,
+      "name": "Argumentación Jurídica",
+      "year": 4,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "deberes-del-abogado",
+      "code": 45,
+      "name": "Deberes del Abogado",
+      "year": 4,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": []
+    },
+    {
+      "id": "taller-de-integracion-clinica-juridica-ii",
+      "code": 46,
+      "name": "Taller de Integración: Clínica Jurídica II",
+      "year": 4,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "contratos-parte-especial",
+        "derecho-de-trabajo",
+        "derecho-administrativo-ii"
+      ]
+    },
+    {
+      "id": "practica-profesional-supervisada",
+      "code": 50,
+      "name": "Práctica Profesional Supervisada",
+      "year": 5,
+      "semester": 1,
+      "annual": true,
+      "hours": 200,
+      "prerequisites": [
+        "taller-de-integracion-clinica-juridica-ii"
+      ]
+    },
+    {
+      "id": "taller-de-trabajo-final-i",
+      "code": 51,
+      "name": "Taller de Trabajo Final I",
+      "year": 5,
+      "semester": 1,
+      "hours": 32,
+      "prerequisites": [
+        "metodologia-de-la-investigacion-juridica"
+      ]
+    },
+    {
+      "id": "derecho-patrimonial-de-familia",
+      "code": 47,
+      "name": "Derecho Patrimonial de Familia",
+      "year": 5,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "derecho-extra-patrimonial-de-familia",
+        "derechos-reales-ii"
+      ]
+    },
+    {
+      "id": "derecho-financiero-y-tributario",
+      "code": 48,
+      "name": "Derecho Financiero y Tributario",
+      "year": 5,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "derecho-constitucional-representacion-politica-y-organos-de-gobierno"
+      ]
+    },
+    {
+      "id": "regimen-legal-de-los-recursos-naturales",
+      "code": 49,
+      "name": "Régimen Legal de los Recursos Naturales",
+      "year": 5,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "derechos-reales-ii"
+      ]
+    },
+    {
+      "id": "filosofia-del-derecho",
+      "code": 52,
+      "name": "Filosofía del Derecho",
+      "year": 5,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "teoria-del-derecho"
+      ]
+    },
+    {
+      "id": "derecho-internacional-privado",
+      "code": 53,
+      "name": "Derecho Internacional Privado",
+      "year": 5,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "derecho-patrimonial-de-familia"
+      ]
+    },
+    {
+      "id": "derecho-ambiental-y-desarrollo-sustentable",
+      "code": 54,
+      "name": "Derecho Ambiental y Desarrollo Sustentable",
+      "year": 5,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "regimen-legal-de-los-recursos-naturales"
+      ]
+    },
+    {
+      "id": "derecho-sucesorio",
+      "code": 55,
+      "name": "Derecho Sucesorio",
+      "year": 5,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "derecho-patrimonial-de-familia"
+      ]
+    },
+    {
+      "id": "taller-de-trabajo-final-ii",
+      "code": 56,
+      "name": "Taller de Trabajo Final II",
+      "year": 5,
+      "semester": 2,
+      "hours": 32,
+      "prerequisites": [
+        "taller-de-trabajo-final-i"
+      ]
+    },
+    {
+      "id": "trabajo-final",
+      "code": 57,
+      "name": "Trabajo Final",
+      "year": 5,
+      "semester": 2,
+      "hours": 0,
+      "prerequisites": [
+        "introduccion-al-derecho",
+        "problematica-del-mundo-actual",
+        "teoria-de-la-persona-y-del-hecho-juridico",
+        "garantias-constitucionales-y-derechos-humanos",
+        "taller-de-informatica-i",
+        "derecho-penal-i",
+        "derecho-extra-patrimonial-de-familia",
+        "derecho-constitucional-representacion-politica-y-organos-de-gobierno",
+        "sujeto-y-sociedad",
+        "taller-de-informatica-ii",
+        "derecho-romano",
+        "derecho-penal-ii",
+        "teoria-general-de-las-obligaciones",
+        "introduccion-al-pensamiento-cientifico",
+        "derecho-procesal-parte-general",
+        "medios-alternativos-de-resolucion-de-conflictos",
+        "derecho-de-danos",
+        "teoria-del-derecho",
+        "derecho-politico",
+        "derecho-literatura-y-lenguaje",
+        "optativa",
+        "derecho-procesal-civil-y-comercial",
+        "derecho-administrativo-i",
+        "teoria-general-e-interpretacion-de-los-contratos",
+        "nociones-de-derecho-comercial",
+        "ingles-i",
+        "derecho-procesal-penal",
+        "contratos-parte-especial",
+        "derecho-de-trabajo",
+        "derecho-administrativo-ii",
+        "ingles-ii",
+        "taller-de-integracion-clinica-juridica-i",
+        "derechos-reales-i",
+        "economia-politica",
+        "interpretacion-del-derecho",
+        "derecho-de-la-seguridad-social",
+        "instituciones-juridicas-argentinas-contemporaneas",
+        "oralidad-en-los-procesos",
+        "derecho-societario-y-cartular",
+        "derecho-internacional-publico",
+        "concursos-y-quiebras",
+        "derechos-reales-ii",
+        "metodologia-de-la-investigacion-juridica",
+        "argumentacion-juridica",
+        "deberes-del-abogado",
+        "taller-de-integracion-clinica-juridica-ii",
+        "derecho-patrimonial-de-familia",
+        "derecho-financiero-y-tributario",
+        "regimen-legal-de-los-recursos-naturales",
+        "practica-profesional-supervisada",
+        "taller-de-trabajo-final-i",
+        "filosofia-del-derecho",
+        "derecho-internacional-privado",
+        "derecho-ambiental-y-desarrollo-sustentable",
+        "derecho-sucesorio",
+        "taller-de-trabajo-final-ii"
+      ]
+    }
+  ]
+}

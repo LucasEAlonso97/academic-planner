@@ -5,6 +5,8 @@ import type { SubjectStatus } from "../../types/SubjectProgress";
 import type { SubjectViewModel } from "../../utils/subjectView";
 
 import GradeInput from "./GradeInput";
+import { MAX_CUSTOM_NAME, isElective } from "../../utils/progressValidation";
+import { periodLabel } from "../../utils/subjectPeriods";
 import {
   describePrerequisites,
   joinNames,
@@ -21,9 +23,16 @@ type SubjectRowProps = {
   onStatusChange: (subject: AcademicSubject, status: SubjectStatus) => boolean;
   grade?: number;
   onGradeChange: (subjectId: string, grade: number | null) => void;
+  isEquivalence: boolean;
+  onEquivalenceChange: (subjectId: string, isEquivalence: boolean) => void;
+  customName?: string;
+  onCustomNameChange: (subjectId: string, name: string | null) => void;
 };
 
-const options: SubjectStatus[] = ["pending", "in_progress", "regular", "passed"];
+// "equivalence" es "Aprobada" marcada como equivalencia.
+type SelectValue = SubjectStatus | "equivalence";
+
+const options: SelectValue[] = ["pending", "in_progress", "regular", "passed", "equivalence"];
 
 function LockIcon() {
   return (
@@ -40,6 +49,10 @@ export default function SubjectRow({
   onStatusChange,
   grade,
   onGradeChange,
+  isEquivalence,
+  onEquivalenceChange,
+  customName,
+  onCustomNameChange,
 }: SubjectRowProps) {
   const {
     subject,
@@ -62,7 +75,7 @@ export default function SubjectRow({
   const needsFinalsFirst =
     !isBlocked && status !== "passed" && !canPass && missingForPass.length > 0;
 
-  const describe = (ids: string[]) => joinNames(describePrerequisites(ids, allSubjects));
+  const describe = (ids: string[]) => joinNames(describePrerequisites(ids, allSubjects, subject));
 
   const requirement = isBlocked
     ? `Falta: ${describe(missingPrerequisites.map((missing) => missing.id))}`
@@ -72,10 +85,41 @@ export default function SubjectRow({
         ? "Sin correlativas"
         : `Requiere: ${describe(subject.prerequisites)}`;
 
-  const isOptionAllowed = (option: SubjectStatus) =>
-    option === "pending" || (option === "passed" ? canPass : prerequisitesMet);
+  const isOptionAllowed = (option: SelectValue) =>
+    option === "pending" ||
+    (option === "passed" || option === "equivalence" ? canPass : prerequisitesMet);
 
-  const allRequirements = describePrerequisites(subject.prerequisites, allSubjects);
+  const isPassedByEquivalence = status === "passed" && isEquivalence;
+  const selectValue: SelectValue = isPassedByEquivalence ? "equivalence" : status;
+
+  const handleSelect = (value: SelectValue) => {
+    if (value === "equivalence") {
+      // Ya aprobada: solo cambia la marca. Si no, primero se aprueba.
+      if (status === "passed" || onStatusChange(subject, "passed")) {
+        onEquivalenceChange(subject.id, true);
+      }
+      return;
+    }
+
+    if (isEquivalence) {
+      onEquivalenceChange(subject.id, false);
+    }
+
+    if (value !== status) {
+      onStatusChange(subject, value);
+    }
+  };
+
+  const optionLabel = (option: SelectValue) => {
+    if (option === "equivalence") return "Equivalencia";
+    if (option === "pending" && status === "pending") return style.label;
+    return statusLabels[option];
+  };
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const elective = isElective(subject);
+
+  const allRequirements = describePrerequisites(subject.prerequisites, allSubjects, subject);
 
   return (
     <li className={`border-b border-zinc-100 last:border-b-0 ${isExpanded ? "bg-zinc-50/70" : ""}`}>
@@ -85,9 +129,49 @@ export default function SubjectRow({
         </span>
 
         <div className="min-w-0">
-          <p className={`text-[15px] font-semibold leading-snug ${isBlocked ? "text-zinc-500" : "text-zinc-900"}`}>
-            {subject.name}
-          </p>
+          {elective && isEditingName ? (
+            <label className="flex items-center gap-2">
+              <span className="sr-only">Nombre de la {subject.name.toLowerCase()} (código {subject.code})</span>
+              <input
+                autoFocus
+                defaultValue={customName ?? ""}
+                maxLength={MAX_CUSTOM_NAME}
+                placeholder="¿Cuál elegiste?"
+                onBlur={(event) => {
+                  onCustomNameChange(subject.id, event.target.value);
+                  setIsEditingName(false);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") event.currentTarget.blur();
+                  if (event.key === "Escape") setIsEditingName(false);
+                }}
+                className="h-9 w-full max-w-xs rounded-lg border border-zinc-300 px-2.5 text-sm font-semibold text-zinc-900 outline-none focus:border-[#7B1730] focus:ring-2 focus:ring-[#7B1730]/15"
+              />
+            </label>
+          ) : (
+            <p className={`text-[15px] font-semibold leading-snug ${isBlocked ? "text-zinc-500" : "text-zinc-900"}`}>
+              {elective && customName ? (
+                <>
+                  <span className="mr-1.5 rounded bg-zinc-100 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">
+                    Optativa
+                  </span>
+                  {customName}
+                </>
+              ) : (
+                subject.name
+              )}
+
+              {elective && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingName(true)}
+                  className="ml-2 inline-flex h-7 items-center rounded-md px-1.5 text-xs font-semibold text-[#7B1730] hover:bg-[#FBF3F5]"
+                >
+                  {customName ? "Cambiar" : "Ponerle nombre"}
+                </button>
+              )}
+            </p>
+          )}
 
           {/* Línea secundaria en celular */}
           <p className="mt-0.5 flex items-center gap-1.5 text-xs leading-snug text-zinc-600 sm:hidden">
@@ -108,7 +192,7 @@ export default function SubjectRow({
         </span>
 
         <div className="flex items-center gap-1.5">
-          {status === "passed" && (
+          {status === "passed" && !isPassedByEquivalence && (
             <GradeInput
               key={grade ?? "sin-nota"}
               subjectName={subject.name}
@@ -117,8 +201,7 @@ export default function SubjectRow({
             />
           )}
 
-          <label className="relative block">
-            <span className="sr-only">Estado de {subject.name}</span>
+          <div className="relative">
 
             <span
               aria-hidden="true"
@@ -126,21 +209,18 @@ export default function SubjectRow({
             />
 
             <select
-              value={status}
-              onChange={(event) =>
-                onStatusChange(subject, event.target.value as SubjectStatus)
-              }
+              aria-label={`Estado de ${subject.name} (código ${subject.code})`}
+              value={selectValue}
+              onChange={(event) => handleSelect(event.target.value as SelectValue)}
               className={`h-9 w-[124px] cursor-pointer appearance-none rounded-full border py-0 pl-7 pr-7 text-[13px] font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[#7B1730]/40 sm:w-[160px] ${style.pill}`}
             >
               {options.map((option) => (
                 <option
                   key={option}
                   value={option}
-                  disabled={!isOptionAllowed(option) && option !== status}
+                  disabled={!isOptionAllowed(option) && option !== selectValue}
                 >
-                  {option === "pending" && status === "pending"
-                    ? style.label
-                    : statusLabels[option]}
+                  {optionLabel(option)}
                 </option>
               ))}
             </select>
@@ -148,7 +228,7 @@ export default function SubjectRow({
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-70">
               <path d="m6 9 6 6 6-6" />
             </svg>
-          </label>
+          </div>
 
           <button
             type="button"
@@ -206,7 +286,7 @@ export default function SubjectRow({
                   <li key={unlocked.id} className="flex justify-between gap-3">
                     <span>{unlocked.name}</span>
                     <span className="shrink-0 text-xs text-zinc-500">
-                      {unlocked.year}° año · {unlocked.semester}° cuatr.
+                      {unlocked.year}° año · {periodLabel(unlocked)}
                     </span>
                   </li>
                 ))}

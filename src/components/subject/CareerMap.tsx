@@ -1,6 +1,7 @@
 import type { SubjectViewModel } from "../../utils/subjectView";
 
 import { formatGrade } from "../../utils/grades";
+import { subjectDisplayName } from "../../utils/subjectNames";
 import {
   displayStatusOrder,
   getDisplayStatus,
@@ -14,6 +15,8 @@ type CareerMapProps = {
   keySubjectId: string | null;
   keySubjectLabel: string | null;
   grades: Record<string, number>;
+  equivalences: Record<string, true>;
+  customNames: Record<string, string>;
 };
 
 const semesters = [1, 2] as const;
@@ -24,7 +27,44 @@ export default function CareerMap({
   keySubjectId,
   keySubjectLabel,
   grades,
+  equivalences,
+  customNames,
 }: CareerMapProps) {
+  const renderTile = (viewModel: SubjectViewModel) => {
+    const status = getDisplayStatus(viewModel);
+    const isKey = viewModel.subject.id === keySubjectId;
+
+    return (
+      <li
+        key={viewModel.subject.id}
+        className={`flex min-h-[68px] flex-col gap-0.5 rounded-lg border px-2.5 py-2 ${statusStyles[status].tile} ${
+          isKey ? "outline outline-2 outline-offset-2 outline-[#7B1730]" : ""
+        }`}
+      >
+        <span className="flex justify-between gap-2 text-[11px] font-semibold opacity-80">
+          <span>Cód. {viewModel.subject.code}</span>
+          {status === "passed" && equivalences[viewModel.subject.id] ? (
+            <span>Equivalencia</span>
+          ) : (
+            status === "passed" &&
+            grades[viewModel.subject.id] !== undefined && (
+              <span>Nota {formatGrade(grades[viewModel.subject.id])}</span>
+            )
+          )}
+        </span>
+        <span className="text-[13px] font-semibold leading-tight">
+          {subjectDisplayName(viewModel.subject, customNames)}
+        </span>
+        <span className="sr-only">{statusStyles[status].label}</span>
+        {isKey && keySubjectLabel && (
+          <span className="text-[11px] font-bold text-[#7B1730]">
+            {keySubjectLabel}
+          </span>
+        )}
+      </li>
+);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <ul aria-label="Referencias" className="flex flex-wrap gap-x-4 gap-y-2">
@@ -61,6 +101,17 @@ export default function CareerMap({
                 </span>
               </div>
 
+              {yearViewModels.some((viewModel) => viewModel.subject.annual) && (
+                <div className="flex flex-col gap-2">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                    Anuales
+                  </h4>
+                  <ul className="grid grid-cols-2 gap-2.5">
+                    {yearViewModels.filter((viewModel) => viewModel.subject.annual).map(renderTile)}
+                  </ul>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-2.5">
                 {semesters.map((semester) => (
                   <div key={semester} className="flex flex-col gap-2">
@@ -70,36 +121,11 @@ export default function CareerMap({
 
                     <ul className="flex flex-col gap-2">
                       {yearViewModels
-                        .filter((viewModel) => viewModel.subject.semester === semester)
-                        .map((viewModel) => {
-                          const status = getDisplayStatus(viewModel);
-                          const isKey = viewModel.subject.id === keySubjectId;
-
-                          return (
-                            <li
-                              key={viewModel.subject.id}
-                              className={`flex min-h-[68px] flex-col gap-0.5 rounded-lg border px-2.5 py-2 ${statusStyles[status].tile} ${
-                                isKey ? "outline outline-2 outline-offset-2 outline-[#7B1730]" : ""
-                              }`}
-                            >
-                              <span className="flex justify-between gap-2 text-[11px] font-semibold opacity-80">
-                                <span>Cód. {viewModel.subject.code}</span>
-                                {status === "passed" && grades[viewModel.subject.id] !== undefined && (
-                                  <span>Nota {formatGrade(grades[viewModel.subject.id])}</span>
-                                )}
-                              </span>
-                              <span className="text-[13px] font-semibold leading-tight">
-                                {viewModel.subject.name}
-                              </span>
-                              <span className="sr-only">{statusStyles[status].label}</span>
-                              {isKey && keySubjectLabel && (
-                                <span className="text-[11px] font-bold text-[#7B1730]">
-                                  {keySubjectLabel}
-                                </span>
-                              )}
-                            </li>
-                          );
-                        })}
+                        .filter(
+                          (viewModel) =>
+                            !viewModel.subject.annual && viewModel.subject.semester === semester
+                        )
+                        .map(renderTile)}
                     </ul>
                   </div>
                 ))}

@@ -1,0 +1,483 @@
+# cargado: 2026-11-27
+LICENCIATURA EN PSICOLOGÍA - PLAN: P1-13
+Título
+LICENCIADO EN PSICOLOGIA
+R.M. Nº 485/97; R.M. Nº 1826/19, UAI - LOMAS
+R.M. Nº 485/97; R.M. Nº 1653/19, UAI - CENTRO
+R.M. Nº 485/97; R.M. Nº 1653/19, UAI - ITUZAINGO
+R.M. Nº 485/97; R.M. Nº 2784/19, UAI - BERAZATEGUI
+R.M. Nº 485/97; R.M. Nº 1769/19, UAI - REGIONAL ROSARIO
+1er Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+01
+
+TEORÍAS Y SISTEMAS PSICOLÓGICOS I
+
+
+64
+
+02
+
+PROCESOS PSICOLÓGICOS BÁSICOS I
+
+
+80
+
+03
+
+BASES BIOLÓGICAS Y NEUROLÓGICAS DEL COMPORTAMIENTO
+
+
+64
+
+04
+
+FILOSOFÍA
+
+
+80
+
+05
+
+TALLER DE INFORMÁTICA I
+
+
+32
+
+1er Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+06
+
+TEORÍAS Y SISTEMAS PSICOLÓGICOS II
+
+01
+
+64
+
+07
+
+PROCESOS PSICOLÓGICOS BÁSICOS II
+
+02
+
+80
+
+08
+
+NEUROPSICOLOGÍA
+
+03
+
+80
+
+09
+
+PROBLEMÁTICA DEL MUNDO ACTUAL
+
+
+64
+
+10
+
+SEMIOLOGÍA Y COMUNICACIÓN HUMANA
+
+
+80
+
+11
+
+TALLER DE INFORMÁTICA II
+
+05
+
+32
+
+2do Año
+Materias anuales
+Código
+Asignatura
+Correlativas
+Carga
+22
+
+SEMINARIO-TALLER DE INTEGRACIÓN I
+
+
+64
+
+2do Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+12
+
+PSICOANÁLISIS I
+
+
+64
+
+13
+
+PSICOLOGÍA DEL DESARROLLO I
+
+06
+
+80
+
+14
+
+FUNDAMENTOS EPISTEMOLÓGICOS Y METODOLÓGICOS
+
+
+64
+
+15
+
+PROBLEMÁTICAS SOCIOLÓGICAS Y ANTROPOLÓGICAS
+
+
+80
+
+16
+
+INGLÉS I
+
+
+32
+
+2do Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+17
+
+PSICOANÁLISIS II
+
+12
+
+64
+
+18
+
+PSICOLOGÍA DEL DESARROLLO II
+
+13
+
+80
+
+19
+
+METODOLOGÍA: DISEÑOS CUANTITATIVOS
+
+14
+
+64
+
+20
+
+ESTADÍSTICA APLICADA A LA PSICOLOGÍA
+
+14
+
+64
+
+21
+
+INGLÉS II
+
+16
+
+32
+
+3er Año
+Materias anuales
+Código
+Asignatura
+Correlativas
+Carga
+32
+
+SEMINARIO-TALLER DE INTEGRACIÓN II
+
+19 20
+
+64
+
+3er Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+23
+
+PSICOPATOLOGÍA I
+
+17 18
+
+80
+
+24
+
+PSICOANÁLISIS III: POST FREUDIANOS Y CONTEMPORÁNEOS
+
+17
+
+64
+
+25
+
+PSICOLOGÍA SOCIAL
+
+
+80
+
+26
+
+TEORÍA Y TÉCNICA DE GRUPOS
+
+
+80
+
+3er Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+27
+
+PSICOPATOLOGÍA II
+
+23
+
+80
+
+28
+
+PSICOPATOLOGÍA PSICOANALÍTICA
+
+24
+
+64
+
+29
+
+METODOLOGÍA: DISEÑOS CUALITATIVOS
+
+14
+
+64
+
+30
+
+PSICOLOGÍA COMUNITARIA
+
+25
+
+80
+
+31
+
+SALUD PÚBLICA Y SALUD MENTAL
+
+14 23
+
+64
+
+4to Año
+Materias anuales
+Código
+Asignatura
+Correlativas
+Carga
+41
+
+SEMINARIO-TALLER DE INTEGRACIÓN III
+
+32
+
+128
+
+4to Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+33
+
+TÉCNICAS DE EXPLORACIÓN PSICOLÓGICA I
+
+27
+
+80
+
+34
+
+CLÍNICA DE NIÑOS Y ADOLESCENTES
+
+27
+
+80
+
+35
+
+PSICOLOGÍA EDUCACIONAL
+
+18
+
+80
+
+36
+
+PSICOFARMACOLOGÍA
+
+08 27
+
+64
+
+4to Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+37
+
+TÉCNICAS DE EXPLORACIÓN PSICOLÓGICA II
+
+33
+
+80
+
+38
+
+CLÍNICA DE ADULTOS
+
+27
+
+80
+
+39
+
+PSICOLOGÍA INSTITUCIONAL
+
+25
+
+64
+
+40
+
+OPTATIVA
+
+
+64
+
+5to Año
+Materias anuales
+Código
+Asignatura
+Correlativas
+Carga
+49
+
+PRÁCTICA PROFESIONAL SUPERVISADA
+
+34 35 37 38 39
+
+256
+
+50
+
+TALLER DE TESIS
+
+41
+
+80
+
+51
+
+TESIS
+
+01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50
+
+1
+
+5to Año
+Materias del primer cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+42
+
+INTEGRACIÓN PSICODIAGNÓSTICA
+
+37
+
+80
+
+43
+
+MÉTODOS Y TÉCNICAS PSICOTERAPÉUTICAS
+
+38
+
+80
+
+44
+
+PSICOLOGÍA LABORAL Y ORGANIZACIONAL
+
+39
+
+80
+
+45
+
+OPTATIVA
+
+
+64
+
+5to Año
+Materias del segundo cuatrimestre
+Código
+Asignatura
+Correlativas
+Carga
+46
+
+ORIENTACIÓN VOCACIONAL Y PROFESIONAL
+
+35
+
+80
+
+47
+
+PSICOLOGÍA JURÍDICA-FORENSE
+
+37
+
+80
+
+48
+
+ÉTICA Y DEONTOLOGÍA PROFESIONAL
+
+
+80

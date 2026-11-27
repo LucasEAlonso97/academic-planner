@@ -5,6 +5,8 @@ import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 
 import { formatGrade, summarizeGrades } from "./grades";
+import { periodGroups } from "./subjectPeriods";
+import { subjectDisplayName } from "./subjectNames";
 import {
   sanitizeCareerRecord,
   type CareerRecord,
@@ -30,6 +32,8 @@ type ProgressPdfBackup = {
   grades?: Record<string, number>;
   planned?: Record<string, string>;
   pace?: number;
+  equivalences?: Record<string, true>;
+  customNames?: Record<string, string>;
 };
 
 type ExportProgressPdfOptions = {
@@ -97,6 +101,8 @@ export function exportProgressToPdf({
     grades: record.grades,
     planned: record.planned,
     pace: record.pace,
+    equivalences: record.equivalences,
+    customNames: record.customNames,
   };
 
   const encodedBackup = encodeBase64(
@@ -225,7 +231,7 @@ export function exportProgressToPdf({
     },
   ];
 
-  const { average } = summarizeGrades(subjects, progress, grades);
+  const { average } = summarizeGrades(subjects, progress, grades, record.equivalences);
 
   if (average !== null) {
     summaryItems.push({ label: "Promedio", value: formatGrade(average) });
@@ -281,7 +287,7 @@ export function exportProgressToPdf({
   const years = [...new Set(subjects.map((subject) => subject.year))].sort(
     (first, second) => first - second
   );
-  const semesters = [1, 2] as const;
+  const semesters = periodGroups;
 
   years.forEach((year) => {
     addPageIfNeeded(18);
@@ -311,8 +317,7 @@ export function exportProgressToPdf({
     semesters.forEach((semester) => {
       const semesterSubjects = subjects.filter(
         (subject) =>
-          subject.year === year &&
-          subject.semester === semester
+          subject.year === year && semester.matches(subject)
       );
 
       if (semesterSubjects.length === 0) {
@@ -325,9 +330,11 @@ export function exportProgressToPdf({
       document.setFont("helvetica", "bold");
       document.setFontSize(10);
       document.text(
-        semester === 1
-          ? "Primer cuatrimestre"
-          : "Segundo cuatrimestre",
+        semester.key === "annual"
+          ? "Materias anuales"
+          : semester.key === "1"
+            ? "Primer cuatrimestre"
+            : "Segundo cuatrimestre",
         leftMargin,
         cursorY
       );
@@ -342,7 +349,7 @@ export function exportProgressToPdf({
 
         const title = `${String(
           subject.code
-        ).padStart(2, "0")} - ${subject.name}`;
+        ).padStart(2, "0")} - ${subjectDisplayName(subject, record.customNames)}`;
 
         const titleLines =
           document.splitTextToSize(title, 125);
@@ -385,9 +392,11 @@ export function exportProgressToPdf({
         const grade = grades[subject.id];
 
         document.text(
-          status === "passed" && grade !== undefined
-            ? `${statusLabels[status]} · ${formatGrade(grade)}`
-            : statusLabels[status],
+          status === "passed" && record.equivalences[subject.id]
+            ? "Aprobada (equiv.)"
+            : status === "passed" && grade !== undefined
+              ? `${statusLabels[status]} · ${formatGrade(grade)}`
+              : statusLabels[status],
           pageWidth - rightMargin - 4,
           cursorY + 1,
           {
@@ -554,6 +563,8 @@ export async function importProgressFromPdf(
       grades: backup.grades,
       planned: backup.planned,
       pace: backup.pace,
+      equivalences: backup.equivalences,
+      customNames: backup.customNames,
     },
     subjects
   ).record;

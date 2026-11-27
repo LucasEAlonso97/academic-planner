@@ -5,7 +5,11 @@ import type { SubjectStatus } from "../types/SubjectProgress";
  * Planificación de cuatrimestres futuros.
  *
  * Supuestos:
- * - Cada materia se dicta en el cuatrimestre que indica el plan.
+ * - Cada materia se dicta en el cuatrimestre que indica el plan. Las
+ *   anuales empiezan en el 1° cuatrimestre y duran todo el año.
+ * - Las materias que piden correlativas del mismo cuatrimestre o
+ *   posteriores (por ejemplo, una tesis) se pueden cursar en cualquier
+ *   cuatrimestre.
  * - Lo que estás cursando ahora queda regularizado al terminar el
  *   cuatrimestre actual.
  * - Para cursar una materia, sus correlativas tienen que estar
@@ -21,6 +25,8 @@ export type Term = {
   /** "1° cuatrimestre de 2027" */
   longLabel: string;
 };
+
+import { flexibleSubjectIds } from "./subjectPeriods";
 
 type Progress = Record<string, SubjectStatus>;
 type PlannedTerms = Record<string, string>;
@@ -46,6 +52,17 @@ export function nextTerm(term: Term): Term {
 
 /** Índice para comparar cuatrimestres. */
 export const termIndex = (term: Term) => term.year * 2 + (term.semester - 1);
+
+const termFromIndex = (index: number) => makeTerm(Math.floor(index / 2), ((index % 2) + 1) as 1 | 2);
+
+/** Último cuatrimestre que ocupa una materia empezando en `term`. */
+export const endTerm = (subject: AcademicSubject, term: Term) =>
+  subject.annual ? nextTerm(term) : term;
+
+/** ¿Se puede empezar esta materia en este cuatrimestre? */
+export function canStartIn(subject: AcademicSubject, term: Term, flexible: Set<string>) {
+  return flexible.has(subject.id) || subject.semester === term.semester;
+}
 
 export function upcomingTerms(start: Term, count: number): Term[] {
   const terms: Term[] = [start];
@@ -96,13 +113,14 @@ export function validatePlan(
   plan: Map<string, Term>
 ): Map<string, PlanIssue[]> {
   const byId = new Map(subjects.map((subject) => [subject.id, subject]));
+  const flexible = flexibleSubjectIds(subjects);
   const issues = new Map<string, PlanIssue[]>();
 
   for (const [subjectId, term] of plan) {
     const subject = byId.get(subjectId)!;
     const list: PlanIssue[] = [];
 
-    if (subject.semester !== term.semester) {
+    if (!canStartIn(subject, term, flexible)) {
       list.push({ kind: "wrong-semester", semester: subject.semester });
     }
 
@@ -111,10 +129,14 @@ export function validatePlan(
         continue;
       }
 
+      const prerequisite = byId.get(prerequisiteId)!;
       const prerequisiteTerm = plan.get(prerequisiteId);
 
-      if (!prerequisiteTerm || termIndex(prerequisiteTerm) >= termIndex(term)) {
-        list.push({ kind: "prerequisite", prerequisite: byId.get(prerequisiteId)! });
+      if (
+        !prerequisiteTerm ||
+        termIndex(endTerm(prerequisite, prerequisiteTerm)) >= termIndex(term)
+      ) {
+        list.push({ kind: "prerequisite", prerequisite });
       }
     }
 
@@ -167,23 +189,32 @@ export function autoPlan(
   progress: Progress,
   start: Term,
   pace: number,
-  maxTerms = 24
+  maxTerms = 30
 ): PlannedTerms {
   const remaining = subjectsToPlan(subjects, progress);
   const weight = dependentCounts(subjects);
-  const covered = new Set(
-    subjects.filter((subject) => isDone(progress[subject.id] ?? "pending")).map((subject) => subject.id)
+  const flexible = flexibleSubjectIds(subjects);
+
+  // Cuatrimestre en que termina cada materia (lo ya cursado, antes del plan).
+  const finishedAt = new Map<string, number>(
+    subjects
+      .filter((subject) => isDone(progress[subject.id] ?? "pending"))
+      .map((subject) => [subject.id, -Infinity])
   );
 
   const result: PlannedTerms = {};
   let term = start;
 
   for (let index = 0; index < maxTerms && remaining.length > 0; index += 1) {
+    const current = termIndex(term);
+
     const candidates = remaining
       .filter(
         (subject) =>
-          subject.semester === term.semester &&
-          subject.prerequisites.every((prerequisiteId) => covered.has(prerequisiteId))
+          canStartIn(subject, term, flexible) &&
+          subject.prerequisites.every(
+            (prerequisiteId) => (finishedAt.get(prerequisiteId) ?? Infinity) < current
+          )
       )
       .sort(
         (first, second) =>
@@ -195,11 +226,10 @@ export function autoPlan(
 
     for (const subject of candidates) {
       result[subject.id] = term.key;
+      finishedAt.set(subject.id, termIndex(endTerm(subject, term)));
       remaining.splice(remaining.indexOf(subject), 1);
     }
 
-    // Lo cursado en este cuatrimestre habilita el siguiente.
-    candidates.forEach((subject) => covered.add(subject.id));
     term = nextTerm(term);
   }
 
@@ -234,9 +264,9 @@ export function estimateFinish(
     return stillCursando && currentTerm ? { kind: "term", term: currentTerm } : { kind: "done" };
   }
 
-  const last = pending
-    .map((subject) => plan.get(subject.id)!)
-    .reduce((latest, term) => (termIndex(term) > termIndex(latest) ? term : latest));
+  const last = Math.max(
+    ...pending.map((subject) => termIndex(endTerm(subject, plan.get(subject.id)!)))
+  );
 
-  return { kind: "term", term: last };
+  return { kind: "term", term: termFromIndex(last) };
 }

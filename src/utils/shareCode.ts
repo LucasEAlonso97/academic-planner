@@ -6,10 +6,12 @@ import type { CareerRecord } from "./progressValidation";
  * Código para pasar el progreso a otro dispositivo sin servidor:
  * todo viaja dentro del link (y del QR).
  *
- * { v: 1, c: careerId, s: "3302…", g: { "1": 8, … }, t: { "11": "2027-1", … }, p: 5 }
+ * { v: 1, c: careerId, s: "3302…", g: { "1": 8, … }, t: { "11": "2027-1", … }, p: 5,
+ *   e: [3, 4], n: { "33": "Periodismo de Moda" } }
  * - s: un dígito por materia, en el orden del plan
  *   (0 pendiente, 1 cursando, 2 debe final, 3 aprobada)
- * - g y t usan el código de la materia como clave
+ * - g, t y n usan el código de la materia como clave; e es la lista de
+ *   códigos aprobados por equivalencia
  */
 
 const STATUS_DIGITS: SubjectStatus[] = ["pending", "in_progress", "regular", "passed"];
@@ -23,6 +25,8 @@ type SharePayload = {
   g?: Record<string, number>;
   t?: Record<string, string>;
   p?: number;
+  e?: number[];
+  n?: Record<string, string>;
 };
 
 function toBase64Url(text: string) {
@@ -65,10 +69,33 @@ export function encodeShareCode(
     }
   }
 
+  const equivalences = subjects
+    .filter((subject) => record.equivalences[subject.id] && record.progress[subject.id] === "passed")
+    .map((subject) => subject.code);
+  const names: Record<string, string> = {};
+
+  for (const subject of subjects) {
+    if (record.customNames[subject.id]) {
+      names[subject.code] = record.customNames[subject.id];
+    }
+  }
+
   if (Object.keys(grades).length > 0) payload.g = grades;
   if (Object.keys(terms).length > 0) payload.t = terms;
+  if (equivalences.length > 0) payload.e = equivalences;
+  if (Object.keys(names).length > 0) payload.n = names;
 
   return toBase64Url(JSON.stringify(payload));
+}
+
+/** Carrera de un código, sin decodificar el resto (para descargarla antes). */
+export function peekShareCareerId(code: string): string | null {
+  try {
+    const payload = JSON.parse(fromBase64Url(code)) as Partial<SharePayload>;
+    return payload?.v === 1 && typeof payload.c === "string" ? payload.c : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -115,9 +142,22 @@ export function decodeShareCode(
         .map(([code, value]) => [byCode.get(code)!, value])
     );
 
+  const equivalences = Object.fromEntries(
+    (Array.isArray(payload.e) ? payload.e : [])
+      .filter((code) => byCode.has(String(code)))
+      .map((code) => [byCode.get(String(code))!, true as const])
+  );
+
   return {
     careerId: payload.c,
-    record: { progress, grades: remap(payload.g), planned: remap(payload.t), pace: payload.p },
+    record: {
+      progress,
+      grades: remap(payload.g),
+      planned: remap(payload.t),
+      pace: payload.p,
+      equivalences,
+      customNames: remap(payload.n),
+    },
   };
 }
 
