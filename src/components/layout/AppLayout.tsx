@@ -22,36 +22,15 @@ const navigationGroups: NavigationGroup[] = [
   {
     title: "General",
     items: [
-      {
-        label: "Inicio",
-        href: "#inicio",
-      },
-    ],
-  },
-  {
-    title: "Seguimiento",
-    items: [
-      {
-        label: "Mi avance",
-        href: "#mi-avance",
-      },
-      {
-        label: "Correlativas",
-        href: "#correlativas",
-      },
-      {
-        label: "Próximo cuatrimestre",
-        href: "#proximo-cuatrimestre",
-      },
+      { label: "Inicio", href: "#inicio" },
+      { label: "Próximo cuatrimestre", href: "#proximo-cuatrimestre" },
     ],
   },
   {
     title: "Carrera",
     items: [
-      {
-        label: "Plan académico",
-        href: "#plan-academico",
-      },
+      { label: "Plan de estudios", href: "#plan-academico" },
+      { label: "Herramientas", href: "#herramientas" },
     ],
   },
 ];
@@ -237,9 +216,13 @@ export default function AppLayout({
         }}
       >
         <div className="px-6 pb-6 pt-8">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-lg font-black text-[#7B1730]">
-            UAI
-          </div>
+          <img
+            src="/pwa-192x192.png"
+            alt=""
+            width={44}
+            height={44}
+            className="h-11 w-11 rounded-xl ring-1 ring-white/20"
+          />
 
           <h1 className="mt-5 text-xl font-black">
             UAI Planner
@@ -274,9 +257,13 @@ export default function AppLayout({
       {/* Encabezado móvil */}
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-zinc-200 bg-white/95 px-4 shadow-sm backdrop-blur lg:hidden">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#7B1730] text-xs font-black text-white">
-            UAI
-          </div>
+          <img
+            src="/pwa-192x192.png"
+            alt=""
+            width={36}
+            height={36}
+            className="h-9 w-9 rounded-lg"
+          />
 
           <div>
             <p className="text-sm font-black text-zinc-900">
@@ -297,9 +284,11 @@ export default function AppLayout({
           onClick={() =>
             setIsMobileMenuOpen(true)
           }
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-xl font-bold text-[#7B1730] transition hover:bg-zinc-50"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-200 bg-white text-[#7B1730] transition hover:bg-zinc-50"
         >
-          ☰
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
         </button>
       </header>
 
@@ -328,9 +317,13 @@ export default function AppLayout({
       >
         <div className="flex items-start justify-between px-5 pb-5 pt-7">
           <div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sm font-black text-[#7B1730]">
-              UAI
-            </div>
+            <img
+              src="/pwa-192x192.png"
+              alt=""
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-xl ring-1 ring-white/20"
+            />
 
             <h2 className="mt-4 text-xl font-black">
               UAI Planner
@@ -345,9 +338,11 @@ export default function AppLayout({
             type="button"
             aria-label="Cerrar menú"
             onClick={closeMobileMenu}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-xl font-bold transition hover:bg-white/15"
+            className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/10 transition hover:bg-white/15"
           >
-            ×
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <path d="M7 7l10 10M17 7 7 17" />
+            </svg>
           </button>
         </div>
 

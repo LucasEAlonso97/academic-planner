@@ -9,10 +9,10 @@ import ConfirmDialog from "./ConfirmDialog";
 import type { AcademicSubject } from "../../types/AcademicSubject";
 import type { SubjectStatus } from "../../types/SubjectProgress";
 
-import {
-  exportProgressToPdf,
-  importProgressFromPdf,
-} from "../../utils/progressPdf";
+// jsPDF y pdf-lib pesan casi 1 MB: se cargan recién
+// cuando la persona exporta o importa.
+const loadPdfUtils = () =>
+  import("../../utils/progressPdf");
 
 type ProgressPdfActionsProps = {
   careerName: string;
@@ -56,10 +56,17 @@ export default function ProgressPdfActions({
   const [pendingImport, setPendingImport] =
     useState<PendingImport | null>(null);
 
-  const handleExport = () => {
+  const [isExporting, setIsExporting] =
+    useState(false);
+
+  const handleExport = async () => {
     setMessage(null);
+    setIsExporting(true);
 
     try {
+      const { exportProgressToPdf } =
+        await loadPdfUtils();
+
       exportProgressToPdf({
         careerName,
         plan,
@@ -76,6 +83,8 @@ export default function ProgressPdfActions({
         type: "error",
         text: "No se pudo generar el PDF.",
       });
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -101,6 +110,9 @@ export default function ProgressPdfActions({
     setMessage(null);
 
     try {
+      const { importProgressFromPdf } =
+        await loadPdfUtils();
+
       const importedProgress =
         await importProgressFromPdf(
           file,
@@ -182,54 +194,54 @@ export default function ProgressPdfActions({
     importedRegularCount -
     importedInProgressCount;
 
+  const importedCounts = [
+    { label: "Aprobadas", value: importedApprovedCount },
+    { label: "Debe final", value: importedRegularCount },
+    { label: "Cursando", value: importedInProgressCount },
+    { label: "Pendientes", value: importedPendingCount },
+  ];
+
   return (
     <>
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7B1730]">
-              Copia de seguridad
-            </p>
+      <section className="flex flex-col gap-4 rounded-2xl border border-zinc-200/80 bg-white p-5">
+        <div>
+          <h3 className="text-base font-bold text-zinc-900">
+            Copia de seguridad
+          </h3>
 
-            <h2 className="mt-1 text-lg font-black text-zinc-900">
-              Exportar o recuperar progreso
-            </h2>
+          <p className="mt-1 text-sm leading-6 text-zinc-600">
+            Tu progreso se guarda solo en este navegador.
+            Descargá un PDF para no perderlo o para pasarlo a
+            otro dispositivo.
+          </p>
+        </div>
 
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-500">
-              Descargá un PDF con tu recorrido académico o
-              recuperá el progreso desde un archivo generado
-              anteriormente por UAI Planner.
-            </p>
-          </div>
+        <div className="mt-auto flex flex-col gap-2 sm:flex-row">
+          <button
+            type="button"
+            disabled={isExporting}
+            onClick={handleExport}
+            className="h-11 rounded-xl bg-[#7B1730] px-4 text-sm font-semibold text-white transition hover:bg-[#651226] disabled:opacity-60"
+          >
+            {isExporting ? "Generando PDF…" : "Descargar PDF"}
+          </button>
 
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <button
-              type="button"
-              onClick={handleExport}
-              className="rounded-xl bg-[#7B1730] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#651226]"
-            >
-              Descargar PDF
-            </button>
+          <button
+            type="button"
+            disabled={isImporting}
+            onClick={handleOpenFileSelector}
+            className="h-11 rounded-xl border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isImporting ? "Leyendo PDF…" : "Importar PDF"}
+          </button>
 
-            <button
-              type="button"
-              disabled={isImporting}
-              onClick={handleOpenFileSelector}
-              className="rounded-xl border border-[#7B1730]/25 bg-white px-5 py-2.5 text-sm font-bold text-[#7B1730] transition hover:bg-[#7B1730]/5 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isImporting
-                ? "Leyendo PDF..."
-                : "Importar PDF"}
-            </button>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="application/pdf,.pdf"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/pdf,.pdf"
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
 
         {message && (
@@ -237,90 +249,55 @@ export default function ProgressPdfActions({
             role="status"
             className={
               message.type === "success"
-                ? "mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-700"
-                : "mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
+                ? "rounded-xl bg-[#E3F3EA] px-3.5 py-2.5 text-sm font-medium text-[#14532D]"
+                : "rounded-xl bg-red-50 px-3.5 py-2.5 text-sm font-medium text-red-700"
             }
           >
             {message.text}
           </p>
         )}
 
-        <div className="mt-4 rounded-xl bg-zinc-50 px-4 py-3">
-          <p className="text-xs leading-5 text-zinc-500">
-            Solo pueden importarse archivos PDF descargados
-            directamente desde UAI Planner. Antes de
-            reemplazar el progreso se mostrará un resumen
-            para confirmar la operación.
-          </p>
-        </div>
+        <p className="text-xs leading-5 text-zinc-500">
+          Solo se pueden importar PDF descargados desde esta
+          app. Antes de reemplazar tu progreso vas a ver un
+          resumen.
+        </p>
       </section>
 
       <ConfirmDialog
         isOpen={pendingImport !== null}
+        tone="danger"
         title="¿Importar este progreso?"
         description={
           pendingImport ? (
             <div>
               <p>
-                Se encontró una copia de seguridad compatible
-                con el plan{" "}
-                <strong className="text-zinc-800">
-                  {plan}
-                </strong>
-                .
+                Copia de seguridad del plan{" "}
+                <strong className="text-zinc-900">{plan}</strong>
+                <span className="block break-all text-xs text-zinc-500">
+                  {pendingImport.fileName}
+                </span>
               </p>
 
-              <div className="mt-3 rounded-xl border border-zinc-200 bg-zinc-50 p-3">
-                <p className="break-all text-xs font-semibold text-zinc-500">
-                  Archivo: {pendingImport.fileName}
-                </p>
-              </div>
+              <dl className="mt-3 grid grid-cols-2 gap-2">
+                {importedCounts.map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-xl bg-zinc-50 px-3 py-2"
+                  >
+                    <dt className="text-xs text-zinc-600">
+                      {item.label}
+                    </dt>
+                    <dd className="text-xl font-bold text-zinc-900">
+                      {item.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
 
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <div className="rounded-xl border border-green-200 bg-green-50 p-3">
-                  <p className="text-xs font-semibold text-green-700">
-                    Aprobadas
-                  </p>
-
-                  <strong className="mt-1 block text-xl font-black text-green-800">
-                    {importedApprovedCount}
-                  </strong>
-                </div>
-
-                <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
-                  <p className="text-xs font-semibold text-amber-700">
-                    Debe final
-                  </p>
-
-                  <strong className="mt-1 block text-xl font-black text-amber-800">
-                    {importedRegularCount}
-                  </strong>
-                </div>
-
-                <div className="rounded-xl border border-blue-200 bg-blue-50 p-3">
-                  <p className="text-xs font-semibold text-blue-700">
-                    Cursando
-                  </p>
-
-                  <strong className="mt-1 block text-xl font-black text-blue-800">
-                    {importedInProgressCount}
-                  </strong>
-                </div>
-
-                <div className="rounded-xl border border-zinc-200 bg-white p-3">
-                  <p className="text-xs font-semibold text-zinc-600">
-                    Pendientes
-                  </p>
-
-                  <strong className="mt-1 block text-xl font-black text-zinc-800">
-                    {importedPendingCount}
-                  </strong>
-                </div>
-              </div>
-
-              <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-red-700">
-                Tu progreso actual será reemplazado por el
-                progreso guardado en este PDF.
+              <p className="mt-3 font-medium text-red-700">
+                Tu progreso actual se va a reemplazar por el de
+                este PDF.
               </p>
             </div>
           ) : null

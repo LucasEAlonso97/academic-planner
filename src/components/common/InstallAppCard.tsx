@@ -45,7 +45,7 @@ export default function InstallAppCard() {
     );
 
   const [isInstalled, setIsInstalled] =
-    useState(false);
+    useState(isStandaloneMode);
 
   const [
     showIosInstructions,
@@ -55,8 +55,6 @@ export default function InstallAppCard() {
   const isIos = isIosDevice();
 
   useEffect(() => {
-    setIsInstalled(isStandaloneMode());
-
     const handleBeforeInstallPrompt = (
       event: Event
     ) => {
@@ -119,30 +117,7 @@ export default function InstallAppCard() {
   };
 
   if (isInstalled) {
-    return (
-      <section className="rounded-2xl border border-green-200 bg-green-50 p-5 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-100 text-2xl">
-            ✓
-          </div>
-
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-green-700">
-              Aplicación instalada
-            </p>
-
-            <h2 className="mt-1 text-lg font-black text-green-950">
-              El planificador está en tu dispositivo
-            </h2>
-
-            <p className="mt-1 text-sm leading-6 text-green-800">
-              Podés abrirlo directamente desde
-              tu pantalla de inicio.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   const canShowInstallButton =
@@ -153,73 +128,47 @@ export default function InstallAppCard() {
   }
 
   return (
-    <section className="rounded-2xl border border-[#7B1730]/20 bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#7B1730]/10 text-2xl">
-            📱
-          </div>
+    <section className="flex flex-col gap-4 rounded-2xl border border-zinc-200/80 bg-white p-5">
+      <div>
+        <h3 className="text-base font-bold text-zinc-900">
+          Instalá la app
+        </h3>
 
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#7B1730]">
-              Acceso rápido
-            </p>
-
-            <h2 className="mt-1 text-lg font-black text-zinc-900">
-              Instalá el planificador
-            </h2>
-
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-500">
-              Abrilo desde la pantalla de inicio
-              como una aplicación, sin tener que
-              buscar nuevamente el enlace.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleInstall}
-          className="shrink-0 rounded-xl bg-[#7B1730] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#651226]"
-        >
-          Instalar aplicación
-        </button>
+        <p className="mt-1 text-sm leading-6 text-zinc-600">
+          Abrila desde la pantalla de inicio como cualquier
+          aplicación, incluso sin conexión.
+        </p>
       </div>
 
-      {showIosInstructions && (
-        <div className="mt-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
-          <p className="font-black text-zinc-900">
-            Instalación en iPhone o iPad
+      {showIosInstructions ? (
+        <div className="rounded-xl bg-zinc-50 p-4">
+          <p className="text-sm font-semibold text-zinc-900">
+            En iPhone o iPad
           </p>
 
-          <ol className="mt-3 space-y-2 text-sm leading-6 text-zinc-600">
-            <li>
-              1. Abrí esta página desde Safari.
-            </li>
-
-            <li>
-              2. Tocá el botón Compartir.
-            </li>
-
-            <li>
-              3. Elegí “Añadir a pantalla de inicio”.
-            </li>
-
-            <li>
-              4. Confirmá tocando “Añadir”.
-            </li>
+          <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm leading-6 text-zinc-700">
+            <li>Abrí esta página en Safari.</li>
+            <li>Tocá el botón Compartir.</li>
+            <li>Elegí “Agregar a inicio”.</li>
+            <li>Confirmá con “Agregar”.</li>
           </ol>
 
           <button
             type="button"
-            onClick={() =>
-              setShowIosInstructions(false)
-            }
-            className="mt-4 text-sm font-bold text-[#7B1730]"
+            onClick={() => setShowIosInstructions(false)}
+            className="mt-2 h-11 text-sm font-semibold text-[#7B1730]"
           >
             Cerrar instrucciones
           </button>
         </div>
+      ) : (
+        <button
+          type="button"
+          onClick={handleInstall}
+          className="mt-auto h-11 self-start rounded-xl border border-zinc-300 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+        >
+          Instalar aplicación
+        </button>
       )}
     </section>
   );

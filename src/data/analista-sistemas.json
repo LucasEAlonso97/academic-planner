@@ -2,9 +2,10 @@
   "career": {
     "id": "analista-sistemas",
     "name": "Tecnicatura Superior en Análisis de Sistemas Informáticos",
+    "shortName": "Análisis de Sistemas Informáticos",
+    "degree": "Tecnicatura Superior",
     "plan": "VCO-19",
-    "years": 3,
-    "totalSubjects": 32
+    "years": 3
   },
   "subjects": [
     {

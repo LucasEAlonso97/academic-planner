@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react";
+import { useId, useState } from "react";
 
 import type { AcademicSubject } from "../../types/AcademicSubject";
 import type { SubjectStatus } from "../../types/SubjectProgress";
 import type { SubjectViewModel } from "../../utils/subjectView";
 
-import SubjectCard from "./SubjectCard";
+import SubjectRow from "./SubjectRow";
 
 type YearSectionProps = {
-  year: 1 | 2 | 3;
+  year: number;
+  /** Materias del año que pasan el filtro actual. */
   viewModels: SubjectViewModel[];
-  totalSubjects: number;
+  /** Todas las materias del año, para calcular el avance real. */
+  yearViewModels: SubjectViewModel[];
+  allSubjects: AcademicSubject[];
+  defaultOpen: boolean;
   forceOpen: boolean;
-  onStatusChange: (
-    subject: AcademicSubject,
-    status: SubjectStatus
-  ) => boolean;
+  note?: string | null;
+  onStatusChange: (subject: AcademicSubject, status: SubjectStatus) => boolean;
 };
 
 const semesters = [1, 2] as const;
@@ -22,78 +24,67 @@ const semesters = [1, 2] as const;
 export default function YearSection({
   year,
   viewModels,
-  totalSubjects,
+  yearViewModels,
+  allSubjects,
+  defaultOpen,
   forceOpen,
+  note,
   onStatusChange,
 }: YearSectionProps) {
-  const [isOpen, setIsOpen] = useState(year === 1);
+  const [isOpenByUser, setIsOpenByUser] = useState(defaultOpen);
+  const isOpen = forceOpen || isOpenByUser;
+  const panelId = useId();
 
-  useEffect(() => {
-    if (forceOpen) {
-      setIsOpen(true);
-    }
-  }, [forceOpen]);
-
-  const approvedCount = viewModels.filter(
-    (viewModel) => viewModel.status === "passed"
-  ).length;
-
-  const progressPercentage =
-    totalSubjects === 0
-      ? 0
-      : Math.round((approvedCount / totalSubjects) * 100);
+  const total = yearViewModels.length;
+  const approved = yearViewModels.filter((viewModel) => viewModel.status === "passed").length;
+  const percentage = total === 0 ? 0 : Math.round((approved / total) * 100);
 
   return (
-    <section className="mb-8 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-      <button
-        type="button"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((currentValue) => !currentValue)}
-        className="flex w-full items-center justify-between gap-5 bg-[#7B1730] px-6 py-5 text-left text-white transition hover:bg-[#681329]"
-      >
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-black">
-              {year}° Año
-            </h3>
-
-            <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold text-white/90">
-              {viewModels.length} de {totalSubjects} materias
-            </span>
-          </div>
-
-          <div className="mt-3 flex items-center gap-3">
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/20">
-              <div
-                className="h-full rounded-full bg-white transition-all"
-                style={{
-                  width: `${progressPercentage}%`,
-                }}
-              />
-            </div>
-
-            <span className="text-xs font-bold text-white/80">
-              {progressPercentage}%
-            </span>
-          </div>
-        </div>
-
-        <span
-          aria-hidden="true"
-          className={`shrink-0 text-lg transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
+    <section
+      aria-label={`${year}° año`}
+      className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white"
+    >
+      <h3>
+        <button
+          type="button"
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          onClick={() => setIsOpenByUser(!isOpen)}
+          className="flex w-full flex-wrap items-center gap-x-4 gap-y-2 px-4 py-4 text-left transition hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#7B1730]/40 sm:px-5"
         >
-          ▼
-        </span>
-      </button>
+          <span className="min-w-14 text-lg font-extrabold text-zinc-950">
+            {year}° año
+          </span>
+
+          <span
+            aria-hidden="true"
+            className="h-1.5 w-24 overflow-hidden rounded-full bg-zinc-100 sm:w-48"
+          >
+            <span
+              className="block h-full rounded-full bg-[#1F8A50] transition-all"
+              style={{ width: `${percentage}%` }}
+            />
+          </span>
+
+          <span className="text-[13px] text-zinc-600">
+            {approved} de {total} aprobadas
+          </span>
+
+          <span className="order-last basis-full text-[13px] text-zinc-500 sm:order-none sm:flex-1 sm:basis-auto">
+            {note}
+          </span>
+
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={`ml-auto text-zinc-500 transition-transform sm:ml-0 ${isOpen ? "rotate-180" : ""}`}>
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      </h3>
 
       {isOpen && (
-        <div className="p-5">
+        <div id={panelId} className="border-t border-zinc-100 px-4 pb-2 sm:px-5">
           {semesters.map((semester) => {
             const semesterViewModels = viewModels.filter(
-              (viewModel) =>
-                viewModel.subject.semester === semester
+              (viewModel) => viewModel.subject.semester === semester
             );
 
             if (semesterViewModels.length === 0) {
@@ -101,51 +92,30 @@ export default function YearSection({
             }
 
             return (
-              <div
-                key={semester}
-                className="mb-8 last:mb-0"
-              >
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <h4 className="text-sm font-black uppercase tracking-wide text-zinc-500">
-                    {semester === 1
-                      ? "Primer cuatrimestre"
-                      : "Segundo cuatrimestre"}
-                  </h4>
+              <div key={semester}>
+                <h4 className="pb-1 pt-4 text-xs font-bold uppercase tracking-wider text-zinc-500">
+                  {semester}° cuatrimestre
+                </h4>
 
-                  <span className="text-xs font-semibold text-zinc-400">
-                    {semesterViewModels.length}{" "}
-                    {semesterViewModels.length === 1
-                      ? "materia"
-                      : "materias"}
-                  </span>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
+                <ul>
                   {semesterViewModels.map((viewModel) => (
-                    <SubjectCard
+                    <SubjectRow
                       key={viewModel.subject.id}
-                      subject={viewModel.subject}
-                      status={viewModel.status}
-                      prerequisitesMet={
-                        viewModel.prerequisitesMet
-                      }
-                      isAvailable={viewModel.isAvailable}
-                      missingPrerequisites={
-                        viewModel.missingPrerequisites
-                      }
-                      prerequisitesCount={
-                        viewModel.prerequisiteNames.length
-                      }
+                      viewModel={viewModel}
+                      allSubjects={allSubjects}
                       onStatusChange={onStatusChange}
-                      unlockedSubjects={
-                        viewModel.unlockedSubjects
-                      }
                     />
                   ))}
-                </div>
+                </ul>
               </div>
             );
           })}
+
+          {viewModels.length === 0 && (
+            <p className="py-4 text-sm text-zinc-500">
+              Ninguna materia de este año coincide con la búsqueda.
+            </p>
+          )}
         </div>
       )}
     </section>

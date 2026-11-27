@@ -4,14 +4,13 @@ import { PDFDocument } from "pdf-lib";
 import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 
+import {
+  enforcePrerequisites,
+  sanitizeProgress,
+} from "./progressValidation";
+
 const BACKUP_PREFIX = "UAI_PLANNER_BACKUP_V1:";
 
-const validStatuses: SubjectStatus[] = [
-  "pending",
-  "in_progress",
-  "regular",
-  "passed",
-];
 
 const statusLabels: Record<SubjectStatus, string> = {
   pending: "Pendiente",
@@ -441,17 +440,6 @@ export function exportProgressToPdf({
   );
 }
 
-function isSubjectStatus(
-  value: unknown
-): value is SubjectStatus {
-  return (
-    typeof value === "string" &&
-    validStatuses.includes(
-      value as SubjectStatus
-    )
-  );
-}
-
 export async function importProgressFromPdf(
   file: File,
   expectedPlan: string,
@@ -537,25 +525,10 @@ export async function importProgressFromPdf(
     );
   }
 
-  const validSubjectIds = new Set(
-    subjects.map((subject) => subject.id)
-  );
-
-  const sanitizedProgress: Record<
-    string,
-    SubjectStatus
-  > = {};
-
-  Object.entries(backup.progress).forEach(
-    ([subjectId, status]) => {
-      if (
-        validSubjectIds.has(subjectId) &&
-        isSubjectStatus(status)
-      ) {
-        sanitizedProgress[subjectId] = status;
-      }
-    }
-  );
-
-  return sanitizedProgress;
+  // Solo materias del plan con estados válidos, y coherentes
+  // con las correlativas.
+  return enforcePrerequisites(
+    sanitizeProgress(backup.progress, subjects),
+    subjects
+  ).progress;
 }

@@ -13,8 +13,7 @@ export default defineConfig({
 
       includeAssets: [
         "favicon.png",
-        "pwa-192x192.png",
-        "pwa-512x512.png",
+        "apple-touch-icon.png",
       ],
 
       manifest: {
@@ -45,7 +44,7 @@ export default defineConfig({
             type: "image/png",
           },
           {
-            src: "/pwa-512x512.png",
+            src: "/pwa-maskable-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
@@ -55,7 +54,7 @@ export default defineConfig({
 
       workbox: {
         globPatterns: [
-          "**/*.{js,css,html,ico,png,svg,json}",
+          "**/*.{js,css,html,ico,svg,json}",
         ],
       },
     }),
