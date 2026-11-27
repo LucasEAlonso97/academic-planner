@@ -1,0 +1,507 @@
+{
+  "career": {
+    "id": "periodismo-i3-06",
+    "name": "Licenciatura en Periodismo",
+    "shortName": "Periodismo",
+    "degree": "Licenciatura",
+    "plan": "I3-06",
+    "years": 4,
+    "titles": [
+      {
+        "name": "Técnico Universitario en Periodismo",
+        "years": 3
+      },
+      {
+        "name": "Licenciado en Periodismo",
+        "years": 4
+      }
+    ]
+  },
+  "subjects": [
+    {
+      "id": "redaccion",
+      "code": 1,
+      "name": "Redacción",
+      "year": 1,
+      "semester": 1,
+      "hours": 96,
+      "prerequisites": []
+    },
+    {
+      "id": "introduccion-al-pensamiento-cientifico",
+      "code": 2,
+      "name": "Introducción al Pensamiento Científico",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "problematica-del-mundo-actual",
+      "code": 3,
+      "name": "Problemática del Mundo Actual",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "informatica-i",
+      "code": 4,
+      "name": "Informática I",
+      "year": 1,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "expresion-oral",
+      "code": 5,
+      "name": "Expresión Oral",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "ingles-i",
+      "code": 6,
+      "name": "Inglés I",
+      "year": 1,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "redaccion-periodistica-i",
+      "code": 7,
+      "name": "Redacción Periodística I",
+      "year": 1,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "redaccion"
+      ]
+    },
+    {
+      "id": "historia-socio-politica-y-del-periodismo-argentino",
+      "code": 8,
+      "name": "Historia Socio-Política y del Periodismo Argentino",
+      "year": 1,
+      "semester": 2,
+      "hours": 96,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-radial-i",
+      "code": 9,
+      "name": "Periodismo Radial I",
+      "year": 1,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "informatica-ii",
+      "code": 10,
+      "name": "Informática II",
+      "year": 1,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "informatica-i"
+      ]
+    },
+    {
+      "id": "ingles-ii",
+      "code": 11,
+      "name": "Inglés II",
+      "year": 1,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "ingles-i"
+      ]
+    },
+    {
+      "id": "redaccion-periodistica-ii",
+      "code": 12,
+      "name": "Redacción Periodística II",
+      "year": 2,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "redaccion-periodistica-i"
+      ]
+    },
+    {
+      "id": "comunicacion-y-medios-masivos",
+      "code": 13,
+      "name": "Comunicación y Medios Masivos",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "metodologia-de-la-investigacion-cientifica",
+      "code": 14,
+      "name": "Metodología de la Investigación Científica",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "introduccion-al-pensamiento-cientifico"
+      ]
+    },
+    {
+      "id": "fotoperiodismo",
+      "code": 15,
+      "name": "Fotoperiodismo",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-radial-ii",
+      "code": 16,
+      "name": "Periodismo Radial II",
+      "year": 2,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": [
+        "periodismo-radial-i"
+      ]
+    },
+    {
+      "id": "ingles-iii",
+      "code": 17,
+      "name": "Inglés III",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "ingles-ii"
+      ]
+    },
+    {
+      "id": "redaccion-periodistica-iii",
+      "code": 18,
+      "name": "Redacción Periodística III",
+      "year": 2,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "redaccion-periodistica-ii"
+      ]
+    },
+    {
+      "id": "infografia",
+      "code": 19,
+      "name": "Infografía",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "produccion-audiovisual",
+      "code": 20,
+      "name": "Producción Audiovisual",
+      "year": 2,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "corrientes-filosoficas",
+      "code": 21,
+      "name": "Corrientes Filosóficas",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "sujeto-y-sociedad",
+      "code": 22,
+      "name": "Sujeto y Sociedad",
+      "year": 2,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-taller-integracion-i",
+      "code": 23,
+      "name": "Seminario-Taller Integración I",
+      "year": 2,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "expresion-oral",
+        "metodologia-de-la-investigacion-cientifica",
+        "periodismo-radial-ii"
+      ]
+    },
+    {
+      "id": "investigacion-periodistica",
+      "code": 24,
+      "name": "Investigación Periodística",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "comunicacion-y-cultura",
+      "code": 25,
+      "name": "Comunicación y Cultura",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "comunicacion-y-medios-masivos"
+      ]
+    },
+    {
+      "id": "pensamiento-socio-politico-y-economico",
+      "code": 26,
+      "name": "Pensamiento Socio-Político y Económico",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "historia-socio-politica-y-del-periodismo-argentino"
+      ]
+    },
+    {
+      "id": "periodismo-televisivo-i",
+      "code": 27,
+      "name": "Periodismo Televisivo I",
+      "year": 3,
+      "semester": 1,
+      "hours": 80,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-taller-integracion-ii",
+      "code": 28,
+      "name": "Seminario-Taller Integración II",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "metodologia-de-la-investigacion-cientifica",
+        "redaccion-periodistica-iii"
+      ]
+    },
+    {
+      "id": "seminario-en-periodismo-cientifico-tecnologico",
+      "code": 29,
+      "name": "Seminario en Periodismo Científico-Tecnológico",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "legislacion-y-etica-en-periodismo-y-comunicacion",
+      "code": 30,
+      "name": "Legislación y Ética en Periodismo y Comunicación",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "organizacion-y-administracion-de-medios",
+      "code": 31,
+      "name": "Organización y Administración de Medios",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-televisivo-ii",
+      "code": 32,
+      "name": "Periodismo Televisivo II",
+      "year": 3,
+      "semester": 2,
+      "hours": 80,
+      "prerequisites": [
+        "periodismo-televisivo-i"
+      ]
+    },
+    {
+      "id": "optativa-33",
+      "code": 33,
+      "name": "Optativa",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-en-periodismo-educativo-y-cultural",
+      "code": 34,
+      "name": "Seminario en Periodismo Educativo y Cultural",
+      "year": 4,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-en-periodismo-deportivo",
+      "code": 35,
+      "name": "Seminario en Periodismo Deportivo",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "ciberculturas-y-periodismo-digital",
+      "code": 36,
+      "name": "Ciberculturas y Periodismo Digital",
+      "year": 4,
+      "semester": 1,
+      "hours": 96,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-taller-integracion-iii",
+      "code": 37,
+      "name": "Seminario-Taller Integración III",
+      "year": 4,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "metodologia-de-la-investigacion-cientifica",
+        "periodismo-televisivo-ii"
+      ]
+    },
+    {
+      "id": "seminario-en-periodismo-economico",
+      "code": 38,
+      "name": "Seminario en Periodismo Económico",
+      "year": 4,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-en-periodismo-politico",
+      "code": 39,
+      "name": "Seminario en Periodismo Político",
+      "year": 4,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-en-periodismo-internacional",
+      "code": 40,
+      "name": "Seminario en Periodismo Internacional",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-en-periodismo-judicial-y-policial",
+      "code": 41,
+      "name": "Seminario en Periodismo Judicial y Policial",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-digital",
+      "code": 42,
+      "name": "Periodismo Digital",
+      "year": 4,
+      "semester": 2,
+      "hours": 96,
+      "prerequisites": [
+        "ciberculturas-y-periodismo-digital"
+      ]
+    },
+    {
+      "id": "optativa-43",
+      "code": 43,
+      "name": "Optativa",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "taller-de-tesis",
+      "code": 44,
+      "name": "Taller de Tesis",
+      "year": 4,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "redaccion",
+        "introduccion-al-pensamiento-cientifico",
+        "problematica-del-mundo-actual",
+        "informatica-i",
+        "expresion-oral",
+        "ingles-i",
+        "redaccion-periodistica-i",
+        "historia-socio-politica-y-del-periodismo-argentino",
+        "periodismo-radial-i",
+        "informatica-ii",
+        "ingles-ii",
+        "redaccion-periodistica-ii",
+        "comunicacion-y-medios-masivos",
+        "metodologia-de-la-investigacion-cientifica",
+        "fotoperiodismo",
+        "periodismo-radial-ii",
+        "ingles-iii",
+        "redaccion-periodistica-iii",
+        "infografia",
+        "produccion-audiovisual",
+        "corrientes-filosoficas",
+        "sujeto-y-sociedad",
+        "seminario-taller-integracion-i",
+        "investigacion-periodistica",
+        "comunicacion-y-cultura",
+        "pensamiento-socio-politico-y-economico",
+        "periodismo-televisivo-i",
+        "seminario-taller-integracion-ii",
+        "seminario-en-periodismo-cientifico-tecnologico",
+        "legislacion-y-etica-en-periodismo-y-comunicacion",
+        "organizacion-y-administracion-de-medios",
+        "periodismo-televisivo-ii",
+        "optativa-33",
+        "seminario-en-periodismo-educativo-y-cultural",
+        "seminario-en-periodismo-deportivo",
+        "ciberculturas-y-periodismo-digital",
+        "seminario-taller-integracion-iii",
+        "seminario-en-periodismo-economico",
+        "seminario-en-periodismo-politico",
+        "seminario-en-periodismo-internacional",
+        "seminario-en-periodismo-judicial-y-policial",
+        "periodismo-digital",
+        "optativa-43"
+      ]
+    },
+    {
+      "id": "tesis",
+      "code": 46,
+      "name": "Tesis",
+      "year": 4,
+      "semester": 2,
+      "hours": 1,
+      "prerequisites": [
+        "taller-de-tesis"
+      ]
+    }
+  ]
+}

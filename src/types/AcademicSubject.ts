@@ -23,7 +23,10 @@ export interface AcademicSubject {
   code: number;
   name: string;
   year: number;
+  /** Cuatrimestre en que se dicta (en las anuales, en el que empieza). */
   semester: 1 | 2;
+  /** Materia anual: se cursa en los dos cuatrimestres del año. */
+  annual?: boolean;
   hours: number;
   prerequisites: string[];
 }

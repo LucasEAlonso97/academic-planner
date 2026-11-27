@@ -5,6 +5,7 @@ import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 
 import { formatGrade, summarizeGrades } from "./grades";
+import { periodGroups } from "./subjectPeriods";
 import {
   sanitizeCareerRecord,
   type CareerRecord,
@@ -281,7 +282,7 @@ export function exportProgressToPdf({
   const years = [...new Set(subjects.map((subject) => subject.year))].sort(
     (first, second) => first - second
   );
-  const semesters = [1, 2] as const;
+  const semesters = periodGroups;
 
   years.forEach((year) => {
     addPageIfNeeded(18);
@@ -311,8 +312,7 @@ export function exportProgressToPdf({
     semesters.forEach((semester) => {
       const semesterSubjects = subjects.filter(
         (subject) =>
-          subject.year === year &&
-          subject.semester === semester
+          subject.year === year && semester.matches(subject)
       );
 
       if (semesterSubjects.length === 0) {
@@ -325,9 +325,11 @@ export function exportProgressToPdf({
       document.setFont("helvetica", "bold");
       document.setFontSize(10);
       document.text(
-        semester === 1
-          ? "Primer cuatrimestre"
-          : "Segundo cuatrimestre",
+        semester.key === "annual"
+          ? "Materias anuales"
+          : semester.key === "1"
+            ? "Primer cuatrimestre"
+            : "Segundo cuatrimestre",
         leftMargin,
         cursorY
       );

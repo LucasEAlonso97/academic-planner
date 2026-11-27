@@ -5,6 +5,7 @@ import type { SubjectStatus } from "../../types/SubjectProgress";
 import type { SubjectViewModel } from "../../utils/subjectView";
 
 import GradeInput from "./GradeInput";
+import { periodLabel } from "../../utils/subjectPeriods";
 import {
   describePrerequisites,
   joinNames,
@@ -62,7 +63,7 @@ export default function SubjectRow({
   const needsFinalsFirst =
     !isBlocked && status !== "passed" && !canPass && missingForPass.length > 0;
 
-  const describe = (ids: string[]) => joinNames(describePrerequisites(ids, allSubjects));
+  const describe = (ids: string[]) => joinNames(describePrerequisites(ids, allSubjects, subject));
 
   const requirement = isBlocked
     ? `Falta: ${describe(missingPrerequisites.map((missing) => missing.id))}`
@@ -75,7 +76,7 @@ export default function SubjectRow({
   const isOptionAllowed = (option: SubjectStatus) =>
     option === "pending" || (option === "passed" ? canPass : prerequisitesMet);
 
-  const allRequirements = describePrerequisites(subject.prerequisites, allSubjects);
+  const allRequirements = describePrerequisites(subject.prerequisites, allSubjects, subject);
 
   return (
     <li className={`border-b border-zinc-100 last:border-b-0 ${isExpanded ? "bg-zinc-50/70" : ""}`}>
@@ -206,7 +207,7 @@ export default function SubjectRow({
                   <li key={unlocked.id} className="flex justify-between gap-3">
                     <span>{unlocked.name}</span>
                     <span className="shrink-0 text-xs text-zinc-500">
-                      {unlocked.year}° año · {unlocked.semester}° cuatr.
+                      {unlocked.year}° año · {periodLabel(unlocked)}
                     </span>
                   </li>
                 ))}

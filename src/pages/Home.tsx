@@ -14,7 +14,7 @@ import NextSemesterCallout from "../components/subject/NextSemesterCallout";
 import SubjectFilters, { type SubjectFilter } from "../components/subject/SubjectFilters";
 import YearSection from "../components/subject/YearSection";
 
-import { careers, getCareer, isKnownCareer } from "../data/career";
+import { careers, displayName, getCareer, isKnownCareer } from "../data/career";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { usePlanner } from "../hooks/usePlanner";
 
@@ -199,11 +199,18 @@ export default function Home() {
       return null;
     }
 
-    // Si hay correlativas que traban todo el año, nombramos solo esas.
-    const blockers = findBlockers(blocked, activeProgress);
-    const shared = blockers.filter((blocker) => blocker.blocks.length === blocked.length);
+    // Si hay correlativas que traban todo el año, las nombramos;
+    // si cada materia está trabada por algo distinto, no listamos nada.
+    const shared = findBlockers(blocked, activeProgress).filter(
+      (blocker) => blocker.blocks.length === blocked.length
+    );
+
+    if (shared.length === 0) {
+      return "Bloqueado por correlativas";
+    }
+
     const names = describePrerequisites(
-      (shared.length > 0 ? shared : blockers).map((blocker) => blocker.subject.id),
+      shared.map((blocker) => blocker.subject.id),
       subjects
     );
 
@@ -236,9 +243,9 @@ export default function Home() {
                   onChange={(event) => planner.setCareer(event.target.value)}
                   className="h-8 max-w-[70vw] cursor-pointer appearance-none truncate rounded-lg border border-[#F0DCE1] bg-[#FBF3F5] py-0 pl-2.5 pr-7 font-semibold text-[#7B1730] outline-none transition hover:border-[#E3C3CC] focus-visible:ring-2 focus-visible:ring-[#7B1730]/30"
                 >
-                  {careers.map(({ career: option }) => (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
+                  {careers.map((option) => (
+                    <option key={option.career.id} value={option.career.id}>
+                      {displayName(option)} · Plan {option.career.plan}
                     </option>
                   ))}
                 </select>

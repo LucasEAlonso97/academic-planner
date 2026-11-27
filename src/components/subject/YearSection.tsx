@@ -5,6 +5,7 @@ import type { SubjectStatus } from "../../types/SubjectProgress";
 import type { SubjectViewModel } from "../../utils/subjectView";
 
 import SubjectRow from "./SubjectRow";
+import { periodGroups } from "../../utils/subjectPeriods";
 
 type YearSectionProps = {
   year: number;
@@ -21,7 +22,6 @@ type YearSectionProps = {
   onGradeChange: (subjectId: string, grade: number | null) => void;
 };
 
-const semesters = [1, 2] as const;
 
 export default function YearSection({
   year,
@@ -86,9 +86,9 @@ export default function YearSection({
 
       {isOpen && (
         <div id={panelId} className="border-t border-zinc-100 px-4 pb-2 sm:px-5">
-          {semesters.map((semester) => {
-            const semesterViewModels = viewModels.filter(
-              (viewModel) => viewModel.subject.semester === semester
+          {periodGroups.map((period) => {
+            const semesterViewModels = viewModels.filter((viewModel) =>
+              period.matches(viewModel.subject)
             );
 
             if (semesterViewModels.length === 0) {
@@ -96,9 +96,9 @@ export default function YearSection({
             }
 
             return (
-              <div key={semester}>
+              <div key={period.key}>
                 <h4 className="pb-1 pt-4 text-xs font-bold uppercase tracking-wider text-zinc-500">
-                  {semester}° cuatrimestre
+                  {period.label}
                 </h4>
 
                 <ul>

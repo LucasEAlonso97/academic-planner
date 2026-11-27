@@ -4,7 +4,9 @@ import type { AcademicSubject, CareerTitle } from "../../types/AcademicSubject";
 import type { SubjectStatus } from "../../types/SubjectProgress";
 
 import { MAX_PACE, MIN_PACE } from "../../utils/progressValidation";
+import { flexibleSubjectIds } from "../../utils/subjectPeriods";
 import {
+  canStartIn,
   effectivePlan,
   estimateFinish,
   termIndex,
@@ -52,21 +54,30 @@ function describeEstimate(estimate: FinishEstimate) {
   }
 }
 
+/** Cuándo se puede cursar, para mostrar junto a la materia. */
+function whenOffered(subject: AcademicSubject, flexible: Set<string>) {
+  if (flexible.has(subject.id)) return "en cualquier cuatrimestre";
+  if (subject.annual) return "anual (empieza en el 1° cuatrimestre)";
+  return `se dicta en el ${subject.semester}° cuatrimestre`;
+}
+
 function TermSelect({
   subject,
   value,
   terms,
   label,
+  flexible,
   onChange,
 }: {
   subject: AcademicSubject;
   value: string;
   terms: Term[];
   label: string;
+  flexible: Set<string>;
   onChange: (termKey: string | null) => void;
 }) {
-  // Se ofrecen los cuatrimestres en que se dicta la materia.
-  const options = terms.filter((term) => term.semester === subject.semester || term.key === value);
+  // Se ofrecen los cuatrimestres en que se puede empezar la materia.
+  const options = terms.filter((term) => canStartIn(subject, term, flexible) || term.key === value);
 
   return (
     <label className="relative block shrink-0">
@@ -111,6 +122,7 @@ export default function PlanSection({
     [subjects, progress, planned, start]
   );
   const issues = useMemo(() => validatePlan(subjects, progress, plan), [subjects, progress, plan]);
+  const flexible = useMemo(() => flexibleSubjectIds(subjects), [subjects]);
 
   const pending = subjects.filter((subject) => (progress[subject.id] ?? "pending") === "pending");
   const unplanned = pending.filter((subject) => !plan.has(subject.id));
@@ -206,7 +218,7 @@ export default function PlanSection({
 
         <p className="text-xs leading-5 text-zinc-500">
           Es una estimación de cursada: no incluye los finales. Supone que cada materia se dicta en
-          el cuatrimestre del plan y que regularizás lo que cursás.
+          el cuatrimestre del plan (las anuales, todo el año) y que regularizás lo que cursás.
           {issueCount > 0 && (
             <strong className="ml-1 font-semibold text-red-700">
               {pluralize(issueCount, "materia tiene", "materias tienen")} problemas en el plan.
@@ -262,6 +274,7 @@ export default function PlanSection({
                             <div className="flex items-center justify-between gap-2">
                               <span className="text-[11px] text-zinc-500">
                                 Cód. {subject.code} · {subject.year}° año
+                                {subject.annual && " · anual"}
                               </span>
 
                               <TermSelect
@@ -269,6 +282,7 @@ export default function PlanSection({
                                 value={term.key}
                                 terms={selectableTerms}
                                 label="Cuatrimestre de"
+                                flexible={flexible}
                                 onChange={(termKey) => onPlanSubject(subject.id, termKey)}
                               />
                             </div>
@@ -295,7 +309,7 @@ export default function PlanSection({
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-zinc-900">{subject.name}</p>
                       <p className="text-xs text-zinc-500">
-                        Cód. {subject.code} · {subject.year}° año · se dicta en el {subject.semester}° cuatrimestre
+                        Cód. {subject.code} · {subject.year}° año · {whenOffered(subject, flexible)}
                       </p>
                     </div>
 
@@ -304,6 +318,7 @@ export default function PlanSection({
                       value=""
                       terms={selectableTerms}
                       label="Planificar"
+                      flexible={flexible}
                       onChange={(termKey) => onPlanSubject(subject.id, termKey)}
                     />
                   </li>
