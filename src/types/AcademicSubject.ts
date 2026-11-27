@@ -3,7 +3,6 @@ export interface CareerInfo {
   name: string;
   plan: string;
   years: number;
-  totalSubjects: number;
 }
 
 export interface AcademicSubject {

@@ -3,8 +3,7 @@
     "id": "analista-sistemas",
     "name": "Tecnicatura Superior en Análisis de Sistemas Informáticos",
     "plan": "VCO-19",
-    "years": 3,
-    "totalSubjects": 32
+    "years": 3
   },
   "subjects": [
     {

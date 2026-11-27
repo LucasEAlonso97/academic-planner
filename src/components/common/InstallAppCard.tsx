@@ -45,7 +45,7 @@ export default function InstallAppCard() {
     );
 
   const [isInstalled, setIsInstalled] =
-    useState(false);
+    useState(isStandaloneMode);
 
   const [
     showIosInstructions,
@@ -55,8 +55,6 @@ export default function InstallAppCard() {
   const isIos = isIosDevice();
 
   useEffect(() => {
-    setIsInstalled(isStandaloneMode());
-
     const handleBeforeInstallPrompt = (
       event: Event
     ) => {
@@ -119,30 +117,7 @@ export default function InstallAppCard() {
   };
 
   if (isInstalled) {
-    return (
-      <section className="rounded-2xl border border-green-200 bg-green-50 p-5 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-100 text-2xl">
-            ✓
-          </div>
-
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-green-700">
-              Aplicación instalada
-            </p>
-
-            <h2 className="mt-1 text-lg font-black text-green-950">
-              El planificador está en tu dispositivo
-            </h2>
-
-            <p className="mt-1 text-sm leading-6 text-green-800">
-              Podés abrirlo directamente desde
-              tu pantalla de inicio.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    return null;
   }
 
   const canShowInstallButton =
