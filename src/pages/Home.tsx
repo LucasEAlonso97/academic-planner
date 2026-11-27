@@ -27,6 +27,7 @@ import {
   displayStatusOrder,
   getDisplayStatus,
   pluralize,
+  statusLabels,
   type DisplayStatus,
 } from "../utils/statusDisplay";
 
@@ -384,12 +385,17 @@ export default function Home() {
             <div>
               <p>
                 Si cambiás <strong className="text-zinc-900">{planner.pendingStatusChange.subject.name}</strong>,
-                estas materias dejan de cumplir sus correlativas y vuelven a Pendiente:
+                estas materias dejan de cumplir sus correlativas y cambian de estado:
               </p>
 
-              <ul className="mt-3 max-h-48 list-disc space-y-1 overflow-y-auto rounded-xl bg-zinc-50 py-3 pl-8 pr-3 text-zinc-800">
-                {planner.pendingStatusChange.affectedSubjects.map((subject) => (
-                  <li key={subject.id}>{subject.name}</li>
+              <ul className="mt-3 max-h-56 space-y-2 overflow-y-auto rounded-xl bg-zinc-50 p-3 text-zinc-800">
+                {planner.pendingStatusChange.affectedSubjects.map(({ subject, from, to }) => (
+                  <li key={subject.id} className="flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:gap-3">
+                    <span className="font-medium">{subject.name}</span>
+                    <span className="shrink-0 text-[13px] text-zinc-600">
+                      {statusLabels[from]} → <strong className="text-zinc-900">{statusLabels[to]}</strong>
+                    </span>
+                  </li>
                 ))}
               </ul>
             </div>

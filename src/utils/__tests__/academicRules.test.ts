@@ -3,8 +3,11 @@ import { describe, expect, it } from "vitest";
 import { subjects } from "../../data/career";
 import {
   canEnrollSubject,
+  canPassSubject,
+  getAllowedStatus,
   getAvailableSubjects,
   getMissingPrerequisites,
+  isStatusAllowed,
 } from "../academicRules";
 
 const byCode = (code: number) => subjects.find((subject) => subject.code === code)!;
@@ -22,6 +25,30 @@ describe("academicRules", () => {
     expect(canEnrollSubject(programacionI, { [estructurada.id]: "in_progress" })).toBe(false);
     expect(canEnrollSubject(programacionI, { [estructurada.id]: "regular" })).toBe(true);
     expect(canEnrollSubject(programacionI, { [estructurada.id]: "passed" })).toBe(true);
+  });
+
+  it("para rendir el final exige la correlativa aprobada", () => {
+    const programacionI = byCode(10);
+    const estructurada = byCode(1);
+
+    expect(canPassSubject(programacionI, { [estructurada.id]: "regular" })).toBe(false);
+    expect(canPassSubject(programacionI, { [estructurada.id]: "passed" })).toBe(true);
+
+    const regular = { [estructurada.id]: "regular" } as const;
+    expect(isStatusAllowed(programacionI, "in_progress", { ...regular })).toBe(true);
+    expect(isStatusAllowed(programacionI, "regular", { ...regular })).toBe(true);
+    expect(isStatusAllowed(programacionI, "passed", { ...regular })).toBe(false);
+  });
+
+  it("getAllowedStatus baja al estado más alto permitido", () => {
+    const programacionI = byCode(10);
+    const estructurada = byCode(1);
+
+    expect(getAllowedStatus(programacionI, "passed", { [estructurada.id]: "regular" })).toBe("regular");
+    expect(getAllowedStatus(programacionI, "passed", {})).toBe("pending");
+    expect(getAllowedStatus(programacionI, "in_progress", { [estructurada.id]: "passed" })).toBe(
+      "in_progress"
+    );
   });
 
   it("lista las correlativas faltantes", () => {

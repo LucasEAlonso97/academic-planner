@@ -1,7 +1,7 @@
 import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 
-import { canEnrollSubject } from "./academicRules";
+import { getAllowedStatus } from "./academicRules";
 
 export type Progress = Record<string, SubjectStatus>;
 
@@ -40,17 +40,27 @@ export function sanitizeProgress(
   return result;
 }
 
+export type StatusAdjustment = {
+  subject: AcademicSubject;
+  from: SubjectStatus;
+  to: SubjectStatus;
+};
+
 /**
- * Devuelve a "Pendiente" las materias con avance cuyas correlativas
- * no se cumplen, repitiendo hasta que el progreso quede coherente.
- * Devuelve también la lista de materias que tuvo que ajustar.
+ * Ajusta las materias cuyas correlativas no permiten su estado:
+ * "Aprobada" baja a "Debe final" si las correlativas solo están
+ * regularizadas, y cualquier estado baja a "Pendiente" si ni
+ * siquiera se puede cursar. Repite hasta que todo quede coherente.
+ *
+ * `pinnedId` es una materia que no se toca (la que se está cambiando).
  */
 export function enforcePrerequisites(
   progress: Progress,
-  subjects: AcademicSubject[]
-): { progress: Progress; adjusted: AcademicSubject[] } {
+  subjects: AcademicSubject[],
+  pinnedId?: string
+): { progress: Progress; adjusted: StatusAdjustment[] } {
   const result: Progress = { ...progress };
-  const adjusted: AcademicSubject[] = [];
+  const original = new Map<string, SubjectStatus>();
 
   let changed = true;
 
@@ -58,15 +68,36 @@ export function enforcePrerequisites(
     changed = false;
 
     for (const subject of subjects) {
-      const status = result[subject.id] ?? "pending";
+      if (subject.id === pinnedId) {
+        continue;
+      }
 
-      if (status !== "pending" && !canEnrollSubject(subject, result)) {
-        delete result[subject.id];
-        adjusted.push(subject);
+      const status = result[subject.id] ?? "pending";
+      const allowed = getAllowedStatus(subject, status, result);
+
+      if (allowed !== status) {
+        if (!original.has(subject.id)) {
+          original.set(subject.id, status);
+        }
+
+        if (allowed === "pending") {
+          delete result[subject.id];
+        } else {
+          result[subject.id] = allowed;
+        }
+
         changed = true;
       }
     }
   }
+
+  const adjusted = subjects
+    .filter((subject) => original.has(subject.id))
+    .map((subject) => ({
+      subject,
+      from: original.get(subject.id)!,
+      to: result[subject.id] ?? "pending",
+    }));
 
   return { progress: result, adjusted };
 }

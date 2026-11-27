@@ -5,20 +5,27 @@ import { career, subjects } from "../data/career";
 import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 
-import { canEnrollSubject } from "../utils/academicRules";
+import { isStatusAllowed } from "../utils/academicRules";
 import {
   enforcePrerequisites,
   sanitizeProgress,
   type Progress,
+  type StatusAdjustment,
 } from "../utils/progressValidation";
 
 type AcademicProgressStore = {
   progress: Progress;
 
+  /** Materias que se ajustaron al cargar porque no cumplían correlativas. */
+  startupAdjustments: StatusAdjustment[];
+
+  /**
+   * Cambia el estado de una materia si las correlativas lo permiten
+   * y ajusta en cadena las materias que dejen de cumplirlas.
+   */
   updateSubjectStatus: (
     subject: AcademicSubject,
-    status: SubjectStatus,
-    resetSubjectIds?: string[]
+    status: SubjectStatus
   ) => boolean;
 
   replaceProgress: (progress: Progress) => void;
@@ -63,7 +70,7 @@ function writeStorage(progress: Progress) {
   }
 }
 
-function loadProgress(): Progress {
+function loadProgress(): { progress: Progress; adjusted: StatusAdjustment[] } {
   const stored = readStorage(STORAGE_KEY) as Partial<StoredProgress> | null;
 
   const raw: unknown =
@@ -71,13 +78,13 @@ function loadProgress(): Progress {
       ? stored.progress
       : readStorage(LEGACY_STORAGE_KEY);
 
-  const { progress } = enforcePrerequisites(
+  const { progress, adjusted } = enforcePrerequisites(
     sanitizeProgress(raw, subjects),
     subjects
   );
 
-  // Migra en silencio desde el formato viejo.
-  if (raw !== null && !stored) {
+  // Migra desde el formato viejo y guarda los ajustes.
+  if (raw !== null && (!stored || adjusted.length > 0)) {
     writeStorage(progress);
 
     try {
@@ -87,32 +94,30 @@ function loadProgress(): Progress {
     }
   }
 
-  return progress;
+  return { progress, adjusted };
 }
+
+const initial = loadProgress();
 
 export const useAcademicProgressStore = create<AcademicProgressStore>(
   (set, get) => ({
-    progress: loadProgress(),
+    progress: initial.progress,
+    startupAdjustments: initial.adjusted,
 
-    updateSubjectStatus: (subject, status, resetSubjectIds = []) => {
+    updateSubjectStatus: (subject, status) => {
       const currentProgress = get().progress;
 
-      if (status !== "pending" && !canEnrollSubject(subject, currentProgress)) {
+      if (!isStatusAllowed(subject, status, currentProgress)) {
         return false;
       }
 
-      const newProgress: Progress = {
-        ...currentProgress,
-        [subject.id]: status,
-      };
-
-      resetSubjectIds.forEach((subjectId) => {
-        delete newProgress[subjectId];
-      });
+      const withChange: Progress = { ...currentProgress, [subject.id]: status };
 
       if (status === "pending") {
-        delete newProgress[subject.id];
+        delete withChange[subject.id];
       }
+
+      const { progress: newProgress } = enforcePrerequisites(withChange, subjects, subject.id);
 
       writeStorage(newProgress);
       set({ progress: newProgress });

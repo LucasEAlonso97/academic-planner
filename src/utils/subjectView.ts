@@ -2,6 +2,8 @@ import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 import {
   canEnrollSubject,
+  canPassSubject,
+  getMissingForPass,
   getMissingPrerequisites,
 } from "./academicRules";
 
@@ -11,6 +13,10 @@ export type SubjectViewModel = {
   prerequisitesMet: boolean;
   isAvailable: boolean;
   missingPrerequisites: AcademicSubject[];
+  /** ¿Las correlativas están aprobadas? (necesario para rendir el final) */
+  canPass: boolean;
+  /** Correlativas que faltan aprobar para poder rendir el final. */
+  missingForPass: AcademicSubject[];
   prerequisiteNames: string[];
   unlockedSubjects: AcademicSubject[];
 };
@@ -47,6 +53,10 @@ export function buildSubjectViewModel(
         ): candidate is AcademicSubject =>
           candidate !== undefined
       );
+
+  const missingForPass = getMissingForPass(subject, progress)
+    .map((id) => allSubjects.find((candidate) => candidate.id === id))
+    .filter((candidate): candidate is AcademicSubject => candidate !== undefined);
 
   const prerequisiteNames = subject.prerequisites
     .map(
@@ -89,6 +99,8 @@ export function buildSubjectViewModel(
     prerequisitesMet,
     isAvailable,
     missingPrerequisites,
+    canPass: canPassSubject(subject, progress),
+    missingForPass,
     prerequisiteNames,
     unlockedSubjects,
   };

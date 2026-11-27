@@ -35,11 +35,25 @@ describe("enforcePrerequisites", () => {
     );
 
     expect(progress).toEqual({ [byCode(4).id]: "passed" });
-    expect(adjusted.map((subject) => subject.code).sort()).toEqual([10, 11]);
+    expect(adjusted.map(({ subject }) => subject.code).sort()).toEqual([10, 11]);
+  });
+
+  it("baja a Debe final una materia aprobada con la correlativa sin final", () => {
+    const { progress, adjusted } = enforcePrerequisites(
+      { [byCode(1).id]: "regular", [byCode(10).id]: "passed" },
+      subjects
+    );
+
+    expect(progress[byCode(10).id]).toBe("regular");
+    expect(adjusted).toEqual([{ subject: byCode(10), from: "passed", to: "regular" }]);
   });
 
   it("deja intacto un progreso coherente", () => {
-    const input = { [byCode(1).id]: "passed", [byCode(10).id]: "regular" } as const;
+    const input = {
+      [byCode(1).id]: "passed",
+      [byCode(10).id]: "passed",
+      [byCode(11).id]: "regular",
+    } as const;
     expect(enforcePrerequisites({ ...input }, subjects).progress).toEqual(input);
   });
 });

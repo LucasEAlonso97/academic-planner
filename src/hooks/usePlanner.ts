@@ -7,9 +7,13 @@ import type { AcademicSubject } from "../types/AcademicSubject";
 import type { SubjectStatus } from "../types/SubjectProgress";
 import type { ToastMessage } from "../components/common/Toast";
 
-import { canEnrollSubject } from "../utils/academicRules";
+import { canEnrollSubject, isStatusAllowed } from "../utils/academicRules";
 import { joinNames } from "../utils/planInsights";
-import type { Progress } from "../utils/progressValidation";
+import {
+  enforcePrerequisites,
+  type Progress,
+  type StatusAdjustment,
+} from "../utils/progressValidation";
 import { statusLabels } from "../utils/statusDisplay";
 import { getAffectedSubjects } from "../utils/statusChangeImpact";
 import { buildSubjectViewModel } from "../utils/subjectView";
@@ -17,14 +21,14 @@ import { buildSubjectViewModel } from "../utils/subjectView";
 export type PendingStatusChange = {
   subject: AcademicSubject;
   nextStatus: SubjectStatus;
-  affectedSubjects: AcademicSubject[];
+  affectedSubjects: StatusAdjustment[];
 };
 
+/** Aplica el cambio y ajusta en cadena lo que deje de cumplir correlativas. */
 function applyChange(
   progress: Progress,
   subject: AcademicSubject,
-  nextStatus: SubjectStatus,
-  resetSubjectIds: string[]
+  nextStatus: SubjectStatus
 ): Progress {
   const next: Progress = { ...progress, [subject.id]: nextStatus };
 
@@ -32,11 +36,7 @@ function applyChange(
     delete next[subject.id];
   }
 
-  resetSubjectIds.forEach((subjectId) => {
-    delete next[subjectId];
-  });
-
-  return next;
+  return enforcePrerequisites(next, subjects, subject.id).progress;
 }
 
 function availableIds(progress: Progress) {
@@ -61,7 +61,26 @@ export function usePlanner() {
   const [simulationProgress, setSimulationProgress] = useState<Progress>({});
   const [pendingStatusChange, setPendingStatusChange] =
     useState<PendingStatusChange | null>(null);
-  const [toast, setToast] = useState<ToastMessage | null>(null);
+  // Si al cargar hubo que corregir materias (por ejemplo, "Aprobada"
+  // con la correlativa sin final), lo avisamos una vez.
+  const [toast, setToast] = useState<ToastMessage | null>(() => {
+    const adjusted = useAcademicProgressStore.getState().startupAdjustments;
+
+    if (adjusted.length === 0) {
+      return null;
+    }
+
+    return {
+      id: Date.now(),
+      type: "warning",
+      title: "Ajustamos tu progreso",
+      description: `${joinNames(adjusted.map(({ subject }) => subject.name))} ${
+        adjusted.every(({ to }) => to === adjusted[0].to)
+          ? `${adjusted.length === 1 ? "pasó" : "pasaron"} a ${statusLabels[adjusted[0].to]}`
+          : "cambiaron de estado"
+      }: para aprobar una materia, sus correlativas tienen que estar aprobadas.`,
+    };
+  });
 
   const activeProgress = isSimulationMode ? simulationProgress : progress;
 
@@ -106,24 +125,31 @@ export function usePlanner() {
   };
 
   /** Aplica el cambio al progreso real o al simulado. */
-  const commit = (
-    subject: AcademicSubject,
-    nextStatus: SubjectStatus,
-    resetSubjectIds: string[] = []
-  ): boolean => {
+  const commit = (subject: AcademicSubject, nextStatus: SubjectStatus): boolean => {
     if (!isSimulationMode) {
-      return updateSubjectStatus(subject, nextStatus, resetSubjectIds);
+      return updateSubjectStatus(subject, nextStatus);
     }
 
-    if (nextStatus !== "pending" && !canEnrollSubject(subject, simulationProgress)) {
+    if (!isStatusAllowed(subject, nextStatus, simulationProgress)) {
       return false;
     }
 
-    setSimulationProgress(
-      applyChange(simulationProgress, subject, nextStatus, resetSubjectIds)
-    );
+    setSimulationProgress(applyChange(simulationProgress, subject, nextStatus));
 
     return true;
+  };
+
+  const notAllowedMessage = (subject: AcademicSubject, nextStatus: SubjectStatus) => {
+    const pending = (nextStatus === "passed"
+      ? subject.prerequisites.filter((id) => activeProgress[id] !== "passed")
+      : subject.prerequisites.filter(
+          (id) => activeProgress[id] !== "passed" && activeProgress[id] !== "regular"
+        )
+    ).map((id) => subjects.find((candidate) => candidate.id === id)?.name ?? id);
+
+    return nextStatus === "passed"
+      ? `Para rendir el final primero tenés que aprobar ${joinNames(pending)}.`
+      : `Para cursarla tenés que regularizar ${joinNames(pending)}.`;
   };
 
   const undoTo = (snapshot: Progress, inSimulation: boolean) => () => {
@@ -135,6 +161,11 @@ export function usePlanner() {
   };
 
   const changeStatus = (subject: AcademicSubject, nextStatus: SubjectStatus): boolean => {
+    if (!isStatusAllowed(subject, nextStatus, activeProgress)) {
+      showToast("error", "No se puede cambiar el estado", notAllowedMessage(subject, nextStatus));
+      return false;
+    }
+
     const affectedSubjects = getAffectedSubjects(subject, nextStatus, subjects, activeProgress);
 
     if (affectedSubjects.length > 0) {
@@ -144,17 +175,13 @@ export function usePlanner() {
 
     const snapshot = activeProgress;
     const before = availableIds(activeProgress);
-    const after = availableIds(applyChange(activeProgress, subject, nextStatus, []));
+    const after = availableIds(applyChange(activeProgress, subject, nextStatus));
     const unlocked = subjects.filter(
       (candidate) => after.has(candidate.id) && !before.has(candidate.id)
     );
 
     if (!commit(subject, nextStatus)) {
-      showToast(
-        "error",
-        "No se pudo cambiar el estado",
-        "La materia todavía no cumple sus correlativas."
-      );
+      showToast("error", "No se puede cambiar el estado", notAllowedMessage(subject, nextStatus));
       return false;
     }
 
@@ -189,19 +216,15 @@ export function usePlanner() {
     const snapshot = activeProgress;
     const { subject, nextStatus, affectedSubjects } = pendingStatusChange;
 
-    const wasUpdated = commit(
-      subject,
-      nextStatus,
-      affectedSubjects.map((affected) => affected.id)
-    );
+    const wasUpdated = commit(subject, nextStatus);
 
     if (wasUpdated) {
       showToast(
         "warning",
         isSimulationMode ? "Simulación ajustada" : "Progreso ajustado",
         `${affectedSubjects.length} ${
-          affectedSubjects.length === 1 ? "materia volvió" : "materias volvieron"
-        } a Pendiente por las correlativas.`,
+          affectedSubjects.length === 1 ? "materia cambió" : "materias cambiaron"
+        } de estado por las correlativas.`,
         { label: "Deshacer", onClick: undoTo(snapshot, isSimulationMode) }
       );
     } else {

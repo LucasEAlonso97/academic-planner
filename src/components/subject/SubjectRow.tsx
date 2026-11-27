@@ -36,8 +36,15 @@ export default function SubjectRow({
   allSubjects,
   onStatusChange,
 }: SubjectRowProps) {
-  const { subject, status, prerequisitesMet, missingPrerequisites, unlockedSubjects } =
-    viewModel;
+  const {
+    subject,
+    status,
+    prerequisitesMet,
+    canPass,
+    missingPrerequisites,
+    missingForPass,
+    unlockedSubjects,
+  } = viewModel;
 
   const [isExpanded, setIsExpanded] = useState(false);
   const detailsId = useId();
@@ -46,16 +53,22 @@ export default function SubjectRow({
   const style = statusStyles[displayStatus];
   const isBlocked = displayStatus === "blocked";
 
+  // Puede cursarse, pero para rendir el final falta aprobar correlativas.
+  const needsFinalsFirst =
+    !isBlocked && status !== "passed" && !canPass && missingForPass.length > 0;
+
+  const describe = (ids: string[]) => joinNames(describePrerequisites(ids, allSubjects));
+
   const requirement = isBlocked
-    ? `Falta: ${joinNames(
-        describePrerequisites(
-          missingPrerequisites.map((missing) => missing.id),
-          allSubjects
-        )
-      )}`
-    : subject.prerequisites.length === 0
-      ? "Sin correlativas"
-      : `Requiere: ${joinNames(describePrerequisites(subject.prerequisites, allSubjects))}`;
+    ? `Falta: ${describe(missingPrerequisites.map((missing) => missing.id))}`
+    : needsFinalsFirst
+      ? `Para rendir: aprobá ${describe(missingForPass.map((missing) => missing.id))}`
+      : subject.prerequisites.length === 0
+        ? "Sin correlativas"
+        : `Requiere: ${describe(subject.prerequisites)}`;
+
+  const isOptionAllowed = (option: SubjectStatus) =>
+    option === "pending" || (option === "passed" ? canPass : prerequisitesMet);
 
   const allRequirements = describePrerequisites(subject.prerequisites, allSubjects);
 
@@ -109,7 +122,7 @@ export default function SubjectRow({
                 <option
                   key={option}
                   value={option}
-                  disabled={option !== "pending" && !prerequisitesMet && option !== status}
+                  disabled={!isOptionAllowed(option) && option !== status}
                 >
                   {option === "pending" && status === "pending"
                     ? style.label
@@ -158,9 +171,10 @@ export default function SubjectRow({
               </ul>
             )}
 
-            {isBlocked && (
-              <p className="mt-2 text-[13px] text-zinc-500">
-                Tienen que estar en “Debe final” o “Aprobada”.
+            {allRequirements.length > 0 && (
+              <p className="mt-2 text-[13px] leading-5 text-zinc-500">
+                Para cursarla tienen que estar en “Debe final” o
+                “Aprobada”. Para rendir el final, aprobadas.
               </p>
             )}
           </div>
