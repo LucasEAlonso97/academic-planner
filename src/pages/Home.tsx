@@ -30,6 +30,7 @@ import { usePlanner } from "../hooks/usePlanner";
 
 import { getAcademicCalendar } from "../utils/academicCalendar";
 import { summarizeGrades } from "../utils/grades";
+import { track, trackOncePerSession } from "../utils/analytics";
 import { autoPlan, makeTerm } from "../utils/semesterPlanner";
 import {
   buildShareUrl,
@@ -126,6 +127,15 @@ export default function Home() {
   }, []);
 
   const isFirstVisit = useAcademicProgressStore((state) => state.isFirstVisit);
+  const [isFirstVisitAtStart] = useState(isFirstVisit);
+
+  // Qué carrera se usa: una vez por visita.
+  useEffect(() => {
+    if (!isFirstVisitAtStart) {
+      trackOncePerSession("uso", { carrera: career.career.id });
+    }
+  }, [career.career.id, isFirstVisitAtStart]);
+
   // Si se entra con un link de "Pasar a otro dispositivo", primero va ese diálogo.
   const showCareerPicker = isFirstVisit && linkImport === null && !readShareCodeFromUrl();
 
@@ -150,6 +160,7 @@ export default function Home() {
     const previous = planner.planned;
 
     planner.replacePlan(autoPlan(subjects, planner.progress, planStart, planner.pace));
+    track("plan-automatico", { carrera: career.career.id, ritmo: planner.pace });
     planner.notify(
       "success",
       "Plan armado",
@@ -527,6 +538,7 @@ export default function Home() {
                 subjects={subjects}
                 progress={planner.progress}
                 onApply={(careerId, record, applied) => {
+                  track("cambio-de-plan", { desde: career.career.id, hacia: careerId, materias: applied });
                   planner.replaceCareerRecord(careerId, record);
                   window.scrollTo({ top: 0 });
                   planner.notify(
@@ -541,9 +553,10 @@ export default function Home() {
             )}
 
             <ShareProgressCard
-              buildLink={() =>
-                buildShareUrl(encodeShareCode(career.career.id, subjects, planner.record))
-              }
+              buildLink={() => {
+                track("qr-mostrado", { carrera: career.career.id });
+                return buildShareUrl(encodeShareCode(career.career.id, subjects, planner.record));
+              }}
             />
 
             <InstallAppCard />
@@ -667,6 +680,7 @@ export default function Home() {
         onConfirm={() => {
           if (linkImport) {
             planner.replaceCareerRecord(linkImport.careerId, linkImport.record);
+            track("qr-importado", { carrera: linkImport.careerId });
             planner.notify("success", "Progreso copiado", "Ya tenés tu progreso en este dispositivo.");
           }
           closeLinkImport();

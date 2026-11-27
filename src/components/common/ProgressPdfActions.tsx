@@ -8,6 +8,7 @@ import ConfirmDialog from "./ConfirmDialog";
 
 import type { AcademicSubject } from "../../types/AcademicSubject";
 import type { CareerRecord } from "../../utils/progressValidation";
+import { track } from "../../utils/analytics";
 
 // jsPDF y pdf-lib pesan casi 1 MB: se cargan recién
 // cuando la persona exporta o importa.
@@ -64,6 +65,8 @@ export default function ProgressPdfActions({
     try {
       const { exportProgressToPdf } =
         await loadPdfUtils();
+
+      track("pdf-exportado");
 
       exportProgressToPdf({
         careerName,
@@ -144,6 +147,7 @@ export default function ProgressPdfActions({
     }
 
     onImport(pendingImport.record);
+    track("pdf-importado");
 
     setPendingImport(null);
 

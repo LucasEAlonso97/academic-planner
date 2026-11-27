@@ -4,9 +4,12 @@ import "./index.css";
 
 import { loadCareer } from "./data/career";
 import { loadStored } from "./store/persistence";
+import { initAnalytics } from "./utils/analytics";
 
 // Antes de arrancar se descarga solo la carrera que la persona usa.
 async function start() {
+  initAnalytics();
+
   await loadCareer(loadStored().activeCareerId);
 
   const { default: App } = await import("./App");

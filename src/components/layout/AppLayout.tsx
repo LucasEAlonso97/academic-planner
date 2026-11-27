@@ -4,6 +4,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { isAnalyticsEnabled } from "../../utils/analytics";
+
 type CareerOption = {
   id: string;
   name: string;
@@ -315,6 +317,7 @@ export default function AppLayout({
             Herramienta independiente.
             Verificá la información en los
             canales oficiales de la UAI.
+            {isAnalyticsEnabled && " Contamos visitas de forma anónima, sin cookies."}
           </p>
         </div>
       </aside>
@@ -430,6 +433,7 @@ export default function AppLayout({
             Herramienta independiente.
             Verificá siempre la información
             académica oficial.
+            {isAnalyticsEnabled && " Contamos visitas de forma anónima, sin cookies."}
           </p>
         </div>
       </aside>

@@ -8,6 +8,7 @@ import type { SubjectStatus } from "../types/SubjectProgress";
 import type { ToastMessage } from "../components/common/Toast";
 
 import { canEnrollSubject, isStatusAllowed } from "../utils/academicRules";
+import { track } from "../utils/analytics";
 import { joinNames } from "../utils/planInsights";
 import {
   enforcePrerequisites,
@@ -256,6 +257,7 @@ export function usePlanner() {
     setSimulationProgress({ ...progress });
     setPendingStatusChange(null);
     setIsSimulationMode(true);
+    track("simulacion", { carrera: careerId });
     showToast(
       "info",
       "Modo simulación activado",
@@ -318,6 +320,10 @@ export function usePlanner() {
     }
 
     setLoadingCareerId(null);
+    track("carrera-elegida", {
+      carrera: nextCareerId,
+      primera_visita: useAcademicProgressStore.getState().isFirstVisit,
+    });
     setIsSimulationMode(false);
     setSimulationProgress({});
     setPendingStatusChange(null);
