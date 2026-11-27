@@ -1,6 +1,10 @@
 export interface CareerInfo {
   id: string;
   name: string;
+  /** Nombre corto para títulos. */
+  shortName?: string;
+  /** Tipo de título, por ejemplo "Tecnicatura Superior". */
+  degree?: string;
   plan: string;
   years: number;
 }
