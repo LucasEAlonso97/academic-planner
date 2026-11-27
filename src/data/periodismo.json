@@ -1,0 +1,413 @@
+{
+  "career": {
+    "id": "periodismo",
+    "name": "Licenciatura en Periodismo, Gestión y Producción de Contenidos",
+    "shortName": "Periodismo, Gestión y Producción de Contenidos",
+    "degree": "Licenciatura",
+    "plan": "I13-25",
+    "years": 4,
+    "titles": [
+      {
+        "name": "Técnico Universitario en Periodismo",
+        "years": 3
+      },
+      {
+        "name": "Licenciado en Periodismo, Gestión y Producción de Contenidos",
+        "years": 4
+      }
+    ]
+  },
+  "subjects": [
+    {
+      "id": "redaccion",
+      "code": 1,
+      "name": "Redacción",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "introduccion-al-periodismo",
+      "code": 2,
+      "name": "Introducción al Periodismo",
+      "year": 1,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "problematica-del-mundo-actual",
+      "code": 3,
+      "name": "Problemática del Mundo Actual",
+      "year": 1,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "laboratorio-de-produccion-i",
+      "code": 4,
+      "name": "Laboratorio de Producción I",
+      "year": 1,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "expresion-oral-y-periodismo-radial",
+      "code": 5,
+      "name": "Expresión Oral y Periodismo Radial",
+      "year": 1,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "fotoperiodismo-i",
+      "code": 6,
+      "name": "Fotoperiodismo I",
+      "year": 1,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "redaccion-periodistica",
+      "code": 7,
+      "name": "Redacción Periodística",
+      "year": 1,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "redaccion"
+      ]
+    },
+    {
+      "id": "historia-del-periodismo-argentino",
+      "code": 8,
+      "name": "Historia del Periodismo Argentino",
+      "year": 1,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "produccion-de-narrativas-sonoras-i",
+      "code": 9,
+      "name": "Producción de Narrativas Sonoras I",
+      "year": 1,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "expresion-oral-y-periodismo-radial"
+      ]
+    },
+    {
+      "id": "laboratorio-de-produccion-ii",
+      "code": 10,
+      "name": "Laboratorio de Producción II",
+      "year": 1,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "laboratorio-de-produccion-i"
+      ]
+    },
+    {
+      "id": "redaccion-y-produccion-periodistica-ii",
+      "code": 11,
+      "name": "Redacción y Producción Periodística II",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "redaccion-periodistica"
+      ]
+    },
+    {
+      "id": "produccion-de-narraciones-sonoras-ii",
+      "code": 12,
+      "name": "Producción de Narraciones Sonoras II",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "produccion-de-narrativas-sonoras-i"
+      ]
+    },
+    {
+      "id": "teoria-y-analisis-de-la-comunicacion-y-los-mensajes-mediaticos",
+      "code": 13,
+      "name": "Teoría y Análisis de la Comunicación y los Mensajes Mediáticos",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "introduccion-al-periodismo"
+      ]
+    },
+    {
+      "id": "fotoperiodismo-ii",
+      "code": 14,
+      "name": "Fotoperiodismo II",
+      "year": 2,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": [
+        "fotoperiodismo-i"
+      ]
+    },
+    {
+      "id": "periodismo-audiovisual-i",
+      "code": 15,
+      "name": "Periodismo Audiovisual I",
+      "year": 2,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "empresas-periodisticas-y-analisis-de-audiencias",
+      "code": 16,
+      "name": "Empresas Periodísticas y Análisis de Audiencias",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-audiovisual-ii",
+      "code": 17,
+      "name": "Periodismo Audiovisual II",
+      "year": 2,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": [
+        "fotoperiodismo-ii"
+      ]
+    },
+    {
+      "id": "periodismo-narrativo-interpretativo",
+      "code": 18,
+      "name": "Periodismo Narrativo-Interpretativo",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "redaccion-y-produccion-periodistica-ii"
+      ]
+    },
+    {
+      "id": "investigacion-periodistica-i",
+      "code": 19,
+      "name": "Investigación Periodística I",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-taller-de-innovacion-creativa-i",
+      "code": 20,
+      "name": "Seminario-Taller de Innovación Creativa I",
+      "year": 2,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "cibercultura-y-produccion-periodistica-multiplataforma",
+      "code": 21,
+      "name": "Cibercultura y Producción Periodística Multiplataforma",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "legislacion-etica-y-reglamentacion-mediatica",
+      "code": 22,
+      "name": "Legislación, Ética y Reglamentación Mediática",
+      "year": 3,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-audiovisual-iii",
+      "code": 23,
+      "name": "Periodismo Audiovisual III",
+      "year": 3,
+      "semester": 1,
+      "hours": 64,
+      "prerequisites": [
+        "periodismo-audiovisual-ii"
+      ]
+    },
+    {
+      "id": "investigacion-periodistica-ii",
+      "code": 24,
+      "name": "Investigación Periodística II",
+      "year": 3,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "marketing-y-periodismo",
+      "code": 25,
+      "name": "Marketing y Periodismo",
+      "year": 3,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-cientifico-tecnologico-y-ambiental",
+      "code": 26,
+      "name": "Periodismo Científico, Tecnológico y Ambiental",
+      "year": 3,
+      "semester": 2,
+      "hours": 64,
+      "prerequisites": []
+    },
+    {
+      "id": "campana-comunicacional",
+      "code": 27,
+      "name": "Campaña Comunicacional",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "infografia-y-visualizacion-de-datos",
+      "code": 28,
+      "name": "Infografía y Visualización de Datos",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-de-datos-y-fact-checking",
+      "code": 29,
+      "name": "Periodismo de Datos y Fact Checking",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "seminario-taller-de-innovacion-creativa-ii",
+      "code": 30,
+      "name": "Seminario-Taller de Innovación Creativa II",
+      "year": 3,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": [
+        "seminario-taller-de-innovacion-creativa-i"
+      ]
+    },
+    {
+      "id": "periodismo-economico-y-financiero",
+      "code": 31,
+      "name": "Periodismo Económico y Financiero",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-politico",
+      "code": 32,
+      "name": "Periodismo Político",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-y-comunicacion-deportiva",
+      "code": 33,
+      "name": "Periodismo y Comunicación Deportiva",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-y-produccion-de-espectaculos-culturales",
+      "code": 34,
+      "name": "Periodismo y Producción de Espectáculos Culturales",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "taller-de-trabajo-final",
+      "code": 35,
+      "name": "Taller de Trabajo Final",
+      "year": 4,
+      "semester": 1,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-internacional",
+      "code": 36,
+      "name": "Periodismo Internacional",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-judicial-y-policial",
+      "code": 37,
+      "name": "Periodismo Judicial y Policial",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "periodismo-emprendedor",
+      "code": 38,
+      "name": "Periodismo Emprendedor",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "comunicacion-institucional-y-voceria",
+      "code": 39,
+      "name": "Comunicación Institucional y Vocería",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    },
+    {
+      "id": "experiencias-formativas-obligatorias-de-caracter-electivo",
+      "code": 40,
+      "name": "Experiencias Formativas Obligatorias de Carácter Electivo",
+      "year": 4,
+      "semester": 2,
+      "hours": 100,
+      "prerequisites": []
+    },
+    {
+      "id": "trabajo-final",
+      "code": 41,
+      "name": "Trabajo Final",
+      "year": 4,
+      "semester": 2,
+      "hours": 48,
+      "prerequisites": []
+    }
+  ]
+}
