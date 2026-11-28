@@ -159,8 +159,16 @@ export default function Home() {
   const handleAutoPlan = () => {
     const previous = planner.planned;
 
-    planner.replacePlan(autoPlan(subjects, planner.progress, planStart, planner.pace));
-    track("plan-automatico", { carrera: career.career.id, ritmo: planner.pace });
+    planner.replacePlan(
+      autoPlan(subjects, planner.progress, planStart, planner.pace, {
+        counterSemester: planner.counterSemester,
+      })
+    );
+    track("plan-automatico", {
+      carrera: career.career.id,
+      ritmo: planner.pace,
+      contracuatrimestre: planner.counterSemester,
+    });
     planner.notify(
       "success",
       "Plan armado",
@@ -192,8 +200,11 @@ export default function Home() {
   }, [viewModels]);
 
   const nextSemesterPlan = useMemo(
-    () => getNextSemesterPlan(viewModels, calendar.nextSemester, activeProgress),
-    [viewModels, calendar.nextSemester, activeProgress]
+    () =>
+      getNextSemesterPlan(viewModels, calendar.nextSemester, activeProgress, {
+        counterSemester: planner.counterSemester,
+      }),
+    [viewModels, calendar.nextSemester, activeProgress, planner.counterSemester]
   );
 
   // La correlativa faltante que más materias traba en toda la carrera.
@@ -510,6 +521,9 @@ export default function Home() {
           onClearPlan={handleClearPlan}
           onPaceChange={planner.setPace}
           customNames={planner.customNames}
+          canUseCounterSemester={planner.canUseCounterSemester}
+          counterSemester={planner.counterSemester}
+          onCounterSemesterChange={planner.setCounterSemester}
         />
 
         <section

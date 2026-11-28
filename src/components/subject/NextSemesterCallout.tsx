@@ -18,7 +18,7 @@ export default function NextSemesterCallout({
   plan,
   customNames,
 }: NextSemesterCalloutProps) {
-  const { available, blockers } = plan;
+  const { available, counterSemester, blockers } = plan;
   const topBlocker = blockers[0];
 
   const title =
@@ -33,10 +33,16 @@ export default function NextSemesterCallout({
   if (available.length === 0 && topBlocker) {
     const unlockCount = pluralize(topBlocker.blocks.length, "materia", "materias");
 
+    const canTakeNowInCounterSemester = counterSemester.some(
+      ({ subject }) => subject.id === topBlocker.subject.id
+    );
+
     hint =
       topBlocker.status === "in_progress"
         ? `Si regularizás ${topBlocker.subject.name}, se habilitan ${unlockCount}.`
-        : `Te falta ${topBlocker.subject.name} para habilitar ${unlockCount}.`;
+        : canTakeNowInCounterSemester
+          ? `Si cursás ${topBlocker.subject.name} en contracuatrimestre, se habilitan ${unlockCount} para el cuatrimestre siguiente.`
+          : `Te falta ${topBlocker.subject.name} para habilitar ${unlockCount}.`;
   }
 
   return (
@@ -79,6 +85,30 @@ export default function NextSemesterCallout({
                 </li>
               )}
             </ul>
+          )}
+
+          {counterSemester.length > 0 && (
+            <div className="mt-2">
+              <p className="text-[13px] font-semibold text-zinc-800">
+                En contracuatrimestre también podés cursar{" "}
+                {pluralize(counterSemester.length, "materia", "materias")}:
+              </p>
+              <ul className="mt-1.5 flex flex-wrap gap-1.5">
+                {counterSemester.slice(0, MAX_CHIPS).map(({ subject }) => (
+                  <li
+                    key={subject.id}
+                    className="rounded-full border border-dashed border-zinc-400 bg-white px-3 py-1 text-[13px] font-medium text-zinc-700"
+                  >
+                    {subjectDisplayName(subject, customNames)}
+                  </li>
+                ))}
+                {counterSemester.length > MAX_CHIPS && (
+                  <li className="px-1 py-1 text-[13px] font-medium text-zinc-600">
+                    y {counterSemester.length - MAX_CHIPS} más
+                  </li>
+                )}
+              </ul>
+            </div>
           )}
 
           {hint && topBlocker && (

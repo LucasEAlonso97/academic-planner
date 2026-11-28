@@ -133,13 +133,16 @@ export function findBlockers(
 
 export type NextSemesterPlan = {
   available: SubjectViewModel[];
+  /** Materias del otro cuatrimestre que se pueden adelantar en contracuatrimestre. */
+  counterSemester: SubjectViewModel[];
   blockers: Blocker[];
 };
 
 export function getNextSemesterPlan(
   viewModels: SubjectViewModel[],
   nextSemester: 1 | 2,
-  progress: Record<string, SubjectStatus>
+  progress: Record<string, SubjectStatus>,
+  { counterSemester = false }: { counterSemester?: boolean } = {}
 ): NextSemesterPlan {
   const flexible = flexibleSubjectIds(viewModels.map((viewModel) => viewModel.subject));
   const inSemester = viewModels.filter(
@@ -148,8 +151,19 @@ export function getNextSemesterPlan(
       viewModel.status === "pending"
   );
 
+  const counterSemesterSubjects = counterSemester
+    ? viewModels.filter(
+        (viewModel) =>
+          viewModel.status === "pending" &&
+          viewModel.prerequisitesMet &&
+          !viewModel.subject.annual &&
+          !inSemester.includes(viewModel)
+      )
+    : [];
+
   return {
     available: inSemester.filter((viewModel) => viewModel.prerequisitesMet),
+    counterSemester: counterSemesterSubjects,
     blockers: findBlockers(
       inSemester.filter((viewModel) => !viewModel.prerequisitesMet),
       progress

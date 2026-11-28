@@ -146,3 +146,25 @@ test("exportar el PDF de respaldo", async ({ page }) => {
 
   expect((await download).suggestedFilename()).toMatch(/\.pdf$/);
 });
+
+test.describe("contracuatrimestre", () => {
+  test("en Análisis de Sistemas se puede adelantar una materia del otro cuatrimestre", async ({ page }) => {
+    await openWithCareer(page, "analista-sistemas", { "problematica-mundo-actual": "passed" });
+
+    await expect(page.locator("#proximo-cuatrimestre")).toContainText("En contracuatrimestre también podés cursar");
+    await expect(page.locator("#proximo-cuatrimestre")).toContainText("Historia de la Ciencia y de la Técnica");
+
+    const plan = page.locator("#planificar");
+    const toggle = plan.getByLabel("Cursar en contracuatrimestre (UAI Centro)");
+    await expect(toggle).toBeChecked();
+
+    await toggle.uncheck();
+    await expect(page.locator("#proximo-cuatrimestre")).not.toContainText("En contracuatrimestre");
+  });
+
+  test("las demás carreras no tienen la opción", async ({ page }) => {
+    await openWithCareer(page, "psicologia-p1-13");
+
+    await expect(page.locator("#planificar").getByLabel("Cursar en contracuatrimestre (UAI Centro)")).toHaveCount(0);
+  });
+});

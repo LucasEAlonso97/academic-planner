@@ -18,6 +18,7 @@ Aplicación web para organizar el progreso académico, consultar correlativas, v
 - Materias aprobadas por equivalencia y herramienta para cambiar de plan o de carrera (pasa las aprobadas con el mismo nombre).
 - Optativas con el nombre que eligió cada estudiante.
 - Fuente de cada plan: fecha de carga y link a la página oficial.
+- Contracuatrimestre en Análisis de Sistemas (UAI Centro): las materias de un cuatrimestre se pueden cursar en el otro si se cumplen las correlativas. Se puede desactivar en Planificar. Para habilitarlo en otra carrera, agregá `"counterSemester": true` en el `career` de su JSON.
 - "Deshacer" después de cada cambio.
 - Simulación de escenarios sin tocar el progreso real.
 - Exportación e importación del progreso mediante PDF.

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getCareer, getLoadedCareers } from "../../data/career";
 import {
   autoPlan,
+  canStartIn,
   effectivePlan,
   estimateFinish,
   makeTerm,
@@ -141,5 +142,60 @@ describe("todas las carreras", () => {
     expect(others.every((subject) => termIndex(plan.get(subject.id)!) < termIndex(taller))).toBe(true);
     expect(termIndex(tesis)).toBe(termIndex(taller) + 1);
     expect(estimateFinish(periodismo, {}, plan, 4, null)).toEqual({ kind: "term", term: tesis });
+  });
+});
+
+describe("contracuatrimestre (Análisis de Sistemas)", () => {
+  const options = { counterSemester: true };
+
+  it("permite cursar materias del otro cuatrimestre, menos las anuales", () => {
+    const flexible = new Set<string>();
+    const programacionI = byCode(10); // 2° cuatrimestre
+
+    expect(canStartIn(programacionI, makeTerm(2027, 1), flexible)).toBe(false);
+    expect(canStartIn(programacionI, makeTerm(2027, 1), flexible, options)).toBe(true);
+    expect(canStartIn({ ...programacionI, annual: true, semester: 1 }, makeTerm(2027, 2), flexible, options)).toBe(false);
+  });
+
+  it("el plan automático respeta correlativas sin dejar problemas", () => {
+    const planned = autoPlan(subjects, {}, start, 6, options);
+    const plan = effectivePlan(subjects, {}, planned, start);
+
+    expect(plan.size).toBe(subjects.length);
+    expect([...validatePlan(subjects, {}, plan, options).keys()]).toEqual([]);
+    // Sin la opción, ese mismo plan tendría materias "en el cuatrimestre equivocado".
+    expect(validatePlan(subjects, {}, plan).size).toBeGreaterThan(0);
+  });
+
+  it("a quien le falta una materia del 2° cuatrimestre, le ahorra un año", () => {
+    // A mitad de 2° año, le falta Historia de la Ciencia (1° año, 2C), que traba todo 3°.
+    const statuses: Record<number, string> = {
+      1: "passed", 2: "passed", 3: "regular", 4: "passed", 5: "passed", 6: "passed", 7: "passed",
+      9: "regular", 10: "passed", 11: "passed", 12: "passed", 13: "regular", 14: "passed",
+      18: "regular", 25: "passed", 17: "in_progress", 19: "in_progress", 20: "in_progress",
+      21: "in_progress", 22: "in_progress",
+    };
+    const progress = Object.fromEntries(
+      subjects.filter((subject) => statuses[subject.code]).map((subject) => [subject.id, statuses[subject.code]])
+    ) as Record<string, "passed" | "regular" | "in_progress">;
+
+    const finish = (counterSemester: boolean) => {
+      const planned = autoPlan(subjects, progress, start, 5, { counterSemester });
+      return {
+        historia: planned[byCode(8).id],
+        finish: estimateFinish(subjects, progress, effectivePlan(subjects, progress, planned, start), 3, null),
+      };
+    };
+
+    expect(finish(false)).toEqual({ historia: "2027-2", finish: { kind: "term", term: makeTerm(2029, 2) } });
+    expect(finish(true)).toEqual({ historia: "2027-1", finish: { kind: "term", term: makeTerm(2028, 2) } });
+  });
+
+  it("a igual prioridad, prefiere la materia en su cuatrimestre", () => {
+    const planned = autoPlan(subjects, {}, start, 6, options);
+
+    // 1C 2027 sin nada aprobado: las 5 de 1° año 1C + una más.
+    const firstTerm = subjects.filter((subject) => planned[subject.id] === "2027-1");
+    expect(firstTerm.filter((subject) => subject.year === 1 && subject.semester === 1)).toHaveLength(5);
   });
 });
