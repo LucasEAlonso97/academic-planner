@@ -9,6 +9,7 @@ import { subjectDisplayName } from "../../utils/subjectNames";
 import {
   canStartIn,
   effectivePlan,
+  isCounterSemester,
   estimateFinish,
   termIndex,
   upcomingTerms,
@@ -33,6 +34,10 @@ type PlanSectionProps = {
   onClearPlan: () => void;
   onPaceChange: (pace: number) => void;
   customNames: Record<string, string>;
+  /** La carrera permite contracuatrimestre (se muestra el interruptor). */
+  canUseCounterSemester: boolean;
+  counterSemester: boolean;
+  onCounterSemesterChange: (enabled: boolean) => void;
 };
 
 /** Cuántos cuatrimestres se muestran como mínimo y como máximo. */
@@ -57,8 +62,11 @@ function describeEstimate(estimate: FinishEstimate) {
 }
 
 /** Cuándo se puede cursar, para mostrar junto a la materia. */
-function whenOffered(subject: AcademicSubject, flexible: Set<string>) {
+function whenOffered(subject: AcademicSubject, flexible: Set<string>, counterSemester: boolean) {
   if (flexible.has(subject.id)) return "en cualquier cuatrimestre";
+  if (counterSemester && !subject.annual) {
+    return `se dicta en el ${subject.semester}° cuatrimestre (o en contracuatrimestre)`;
+  }
   if (subject.annual) return "anual (empieza en el 1° cuatrimestre)";
   return `se dicta en el ${subject.semester}° cuatrimestre`;
 }
@@ -69,6 +77,7 @@ function TermSelect({
   terms,
   label,
   flexible,
+  counterSemester,
   onChange,
 }: {
   subject: AcademicSubject;
@@ -76,10 +85,13 @@ function TermSelect({
   terms: Term[];
   label: string;
   flexible: Set<string>;
+  counterSemester: boolean;
   onChange: (termKey: string | null) => void;
 }) {
   // Se ofrecen los cuatrimestres en que se puede empezar la materia.
-  const options = terms.filter((term) => canStartIn(subject, term, flexible) || term.key === value);
+  const options = terms.filter(
+    (term) => canStartIn(subject, term, flexible, { counterSemester }) || term.key === value
+  );
 
   return (
     <label className="relative block shrink-0">
@@ -119,12 +131,18 @@ export default function PlanSection({
   onClearPlan,
   onPaceChange,
   customNames,
+  canUseCounterSemester,
+  counterSemester,
+  onCounterSemesterChange,
 }: PlanSectionProps) {
   const plan = useMemo(
     () => effectivePlan(subjects, progress, planned, start),
     [subjects, progress, planned, start]
   );
-  const issues = useMemo(() => validatePlan(subjects, progress, plan), [subjects, progress, plan]);
+  const issues = useMemo(
+    () => validatePlan(subjects, progress, plan, { counterSemester }),
+    [subjects, progress, plan, counterSemester]
+  );
   const flexible = useMemo(() => flexibleSubjectIds(subjects), [subjects]);
 
   const pending = subjects.filter((subject) => (progress[subject.id] ?? "pending") === "pending");
@@ -189,6 +207,18 @@ export default function PlanSection({
             {plan.size > 0 ? "Rearmar plan automático" : "Armar plan automático"}
           </button>
 
+          {canUseCounterSemester && (
+            <label className="flex h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-zinc-200 px-3.5 text-sm font-medium text-zinc-800">
+              <input
+                type="checkbox"
+                checked={counterSemester}
+                onChange={(event) => onCounterSemesterChange(event.target.checked)}
+                className="h-4 w-4 accent-[#7B1730]"
+              />
+              Cursar en contracuatrimestre (UAI Centro)
+            </label>
+          )}
+
           {plan.size > 0 && (
             <button
               type="button"
@@ -221,7 +251,9 @@ export default function PlanSection({
 
         <p className="text-xs leading-5 text-zinc-500">
           Es una estimación de cursada: no incluye los finales. Supone que cada materia se dicta en
-          el cuatrimestre del plan (las anuales, todo el año) y que regularizás lo que cursás.
+          el cuatrimestre del plan (las anuales, todo el año)
+          {canUseCounterSemester && counterSemester && ", o en contracuatrimestre,"} y que
+          regularizás lo que cursás.
           {issueCount > 0 && (
             <strong className="ml-1 font-semibold text-red-700">
               {pluralize(issueCount, "materia tiene", "materias tienen")} problemas en el plan.
@@ -268,6 +300,12 @@ export default function PlanSection({
                               {subjectDisplayName(subject, customNames)}
                             </p>
 
+                            {isCounterSemester(subject, term, flexible) && (
+                              <span className="self-start rounded bg-[#E2ECFB] px-1.5 py-0.5 text-[11px] font-semibold text-[#1D4E9E]">
+                                En contracuatrimestre
+                              </span>
+                            )}
+
                             {subjectIssues.map((issue) => (
                               <p key={describeIssue(issue)} className="text-xs font-medium text-red-700">
                                 {describeIssue(issue)}
@@ -278,6 +316,7 @@ export default function PlanSection({
                               <span className="text-[11px] text-zinc-500">
                                 Cód. {subject.code} · {subject.year}° año
                                 {subject.annual && " · anual"}
+
                               </span>
 
                               <TermSelect
@@ -286,6 +325,7 @@ export default function PlanSection({
                                 terms={selectableTerms}
                                 label="Cuatrimestre de"
                                 flexible={flexible}
+                                counterSemester={counterSemester}
                                 onChange={(termKey) => onPlanSubject(subject.id, termKey)}
                               />
                             </div>
@@ -314,7 +354,7 @@ export default function PlanSection({
                         {subjectDisplayName(subject, customNames)}
                       </p>
                       <p className="text-xs text-zinc-500">
-                        Cód. {subject.code} · {subject.year}° año · {whenOffered(subject, flexible)}
+                        Cód. {subject.code} · {subject.year}° año · {whenOffered(subject, flexible, counterSemester)}
                       </p>
                     </div>
 
@@ -324,6 +364,7 @@ export default function PlanSection({
                       terms={selectableTerms}
                       label="Planificar"
                       flexible={flexible}
+                                counterSemester={counterSemester}
                       onChange={(termKey) => onPlanSubject(subject.id, termKey)}
                     />
                   </li>

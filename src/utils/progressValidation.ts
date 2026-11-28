@@ -26,6 +26,8 @@ export type CareerRecord = {
   pace: number;
   equivalences: Equivalences;
   customNames: CustomNames;
+  /** Usar contracuatrimestre al planificar (si la carrera lo permite). */
+  counterSemester: boolean;
 };
 
 export const MAX_CUSTOM_NAME = 60;
@@ -218,6 +220,7 @@ export function sanitizeCareerRecord(
       customNames: Object.fromEntries(
         Object.entries(customNames).map(([id, name]) => [id, name.trim()])
       ),
+      counterSemester: source.counterSemester !== false,
     },
     adjusted,
   };

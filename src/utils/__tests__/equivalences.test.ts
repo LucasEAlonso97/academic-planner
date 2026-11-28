@@ -11,6 +11,7 @@ const empty = (): CareerRecord => ({
   pace: 5,
   equivalences: {},
   customNames: {},
+  counterSemester: true,
 });
 
 const passedByCode = (careerId: string, codes: number[]) =>

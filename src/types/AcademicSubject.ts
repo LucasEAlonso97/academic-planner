@@ -18,6 +18,12 @@ export interface CareerInfo {
   titles?: CareerTitle[];
   /** De dónde sale el plan y cuándo se cargó. */
   source?: CareerSource;
+  /**
+   * Se pueden cursar materias en contracuatrimestre (las del 2° en el 1°
+   * y viceversa), cumpliendo las correlativas. Hoy: Análisis de Sistemas
+   * en UAI Centro.
+   */
+  counterSemester?: boolean;
 }
 
 export interface CareerSource {

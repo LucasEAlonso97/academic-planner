@@ -52,6 +52,9 @@ type AcademicProgressStore = CareerRecord & {
   /** Nombre de una optativa; `null` lo borra. */
   setCustomName: (subjectId: string, name: string | null) => void;
 
+  /** Planificar con o sin contracuatrimestre. */
+  setCounterSemester: (enabled: boolean) => void;
+
   replaceProgress: (progress: Progress) => void;
 
   /** Reemplaza todos los datos de una carrera (importación). */
@@ -69,6 +72,7 @@ const emptyRecord = (): CareerRecord => ({
   pace: DEFAULT_PACE,
   equivalences: {},
   customNames: {},
+  counterSemester: true,
 });
 
 function loadRecord(careerId: string) {
@@ -94,7 +98,8 @@ if (!isFirstVisit) {
 export const useAcademicProgressStore = create<AcademicProgressStore>((set, get) => {
   /** Guarda la carrera activa y actualiza el estado. */
   const save = (changes: Partial<CareerRecord>) => {
-    const { careerId, progress, grades, planned, pace, equivalences, customNames } = get();
+    const { careerId, progress, grades, planned, pace, equivalences, customNames, counterSemester } =
+      get();
     const record: CareerRecord = {
       progress,
       grades,
@@ -102,6 +107,7 @@ export const useAcademicProgressStore = create<AcademicProgressStore>((set, get)
       pace,
       equivalences,
       customNames,
+      counterSemester,
       ...changes,
     };
 
@@ -213,6 +219,8 @@ export const useAcademicProgressStore = create<AcademicProgressStore>((set, get)
       save({ customNames });
     },
 
+    setCounterSemester: (counterSemester) => save({ counterSemester }),
+
     replaceProgress: (incomingProgress) => {
       const { record } = sanitizeCareerRecord(
         { ...get(), progress: incomingProgress },
@@ -245,8 +253,8 @@ export function getStoredRecord(careerId: string): CareerRecord {
   const state = useAcademicProgressStore.getState();
 
   if (careerId === state.careerId) {
-    const { progress, grades, planned, pace, equivalences, customNames } = state;
-    return { progress, grades, planned, pace, equivalences, customNames };
+    const { progress, grades, planned, pace, equivalences, customNames, counterSemester } = state;
+    return { progress, grades, planned, pace, equivalences, customNames, counterSemester };
   }
 
   return loadRecord(careerId).record;

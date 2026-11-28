@@ -22,7 +22,7 @@ describe("shareCode", () => {
       customNames: {},
     };
 
-    const code = encodeShareCode("periodismo", subjects, { ...record, progress: { ...record.progress } });
+    const code = encodeShareCode("periodismo", subjects, { ...record, progress: { ...record.progress }, counterSemester: true });
     const decoded = decodeShareCode(code, lookup);
 
     expect(code).toMatch(/^[A-Za-z0-9_-]+$/);

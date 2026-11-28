@@ -66,3 +66,20 @@ describe("describePrerequisites con la materia que las pide", () => {
     ]);
   });
 });
+
+describe("próximo cuatrimestre con contracuatrimestre", () => {
+  it("lista aparte las materias del otro cuatrimestre que ya se pueden cursar", () => {
+    const analista = getCareer("analista-sistemas").subjects;
+    const problematica = analista.find((subject) => subject.code === 4)!;
+    const progress = { [problematica.id]: "passed" } as const;
+    const viewModels = analista.map((subject) => buildSubjectViewModel(subject, analista, { ...progress }));
+
+    const without = getNextSemesterPlan(viewModels, 1, { ...progress });
+    const withCounter = getNextSemesterPlan(viewModels, 1, { ...progress }, { counterSemester: true });
+
+    expect(without.counterSemester).toEqual([]);
+    expect(withCounter.available).toEqual(without.available);
+    expect(withCounter.counterSemester.map(({ subject }) => subject.code)).toContain(8);
+    expect(withCounter.counterSemester.every(({ subject }) => subject.semester === 2)).toBe(true);
+  });
+});

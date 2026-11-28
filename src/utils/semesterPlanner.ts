@@ -10,6 +10,9 @@ import type { SubjectStatus } from "../types/SubjectProgress";
  * - Las materias que piden correlativas del mismo cuatrimestre o
  *   posteriores (por ejemplo, una tesis) se pueden cursar en cualquier
  *   cuatrimestre.
+ * - Con la opción de contracuatrimestre (UAI Centro), cualquier materia
+ *   de cuatrimestre se puede cursar también en el otro cuatrimestre.
+ *   Las anuales no.
  * - Lo que estás cursando ahora queda regularizado al terminar el
  *   cuatrimestre actual.
  * - Para cursar una materia, sus correlativas tienen que estar
@@ -59,9 +62,28 @@ const termFromIndex = (index: number) => makeTerm(Math.floor(index / 2), ((index
 export const endTerm = (subject: AcademicSubject, term: Term) =>
   subject.annual ? nextTerm(term) : term;
 
+export type PlanOptions = {
+  /** Permitir cursar materias en contracuatrimestre (UAI Centro). */
+  counterSemester?: boolean;
+};
+
 /** ¿Se puede empezar esta materia en este cuatrimestre? */
-export function canStartIn(subject: AcademicSubject, term: Term, flexible: Set<string>) {
-  return flexible.has(subject.id) || subject.semester === term.semester;
+export function canStartIn(
+  subject: AcademicSubject,
+  term: Term,
+  flexible: Set<string>,
+  { counterSemester = false }: PlanOptions = {}
+) {
+  return (
+    flexible.has(subject.id) ||
+    subject.semester === term.semester ||
+    (counterSemester && !subject.annual)
+  );
+}
+
+/** ¿Cursarla en este cuatrimestre sería en contracuatrimestre? */
+export function isCounterSemester(subject: AcademicSubject, term: Term, flexible: Set<string>) {
+  return !subject.annual && !flexible.has(subject.id) && subject.semester !== term.semester;
 }
 
 export function upcomingTerms(start: Term, count: number): Term[] {
@@ -110,7 +132,8 @@ export type PlanIssue =
 export function validatePlan(
   subjects: AcademicSubject[],
   progress: Progress,
-  plan: Map<string, Term>
+  plan: Map<string, Term>,
+  options: PlanOptions = {}
 ): Map<string, PlanIssue[]> {
   const byId = new Map(subjects.map((subject) => [subject.id, subject]));
   const flexible = flexibleSubjectIds(subjects);
@@ -120,7 +143,7 @@ export function validatePlan(
     const subject = byId.get(subjectId)!;
     const list: PlanIssue[] = [];
 
-    if (!canStartIn(subject, term, flexible)) {
+    if (!canStartIn(subject, term, flexible, options)) {
       list.push({ kind: "wrong-semester", semester: subject.semester });
     }
 
@@ -181,14 +204,16 @@ function dependentCounts(subjects: AcademicSubject[]): Map<string, number> {
 
 /**
  * Arma un plan automático: cuatrimestre por cuatrimestre, elige hasta
- * `pace` materias que se dicten en ese cuatrimestre y cuyas correlativas
- * ya estén cubiertas, priorizando las que destraban más materias.
+ * `pace` materias que se puedan cursar en ese cuatrimestre y cuyas
+ * correlativas ya estén cubiertas, priorizando las que destraban más
+ * materias y, a igual prioridad, las que se dictan en ese cuatrimestre.
  */
 export function autoPlan(
   subjects: AcademicSubject[],
   progress: Progress,
   start: Term,
   pace: number,
+  options: PlanOptions = {},
   maxTerms = 30
 ): PlannedTerms {
   const remaining = subjectsToPlan(subjects, progress);
@@ -211,7 +236,7 @@ export function autoPlan(
     const candidates = remaining
       .filter(
         (subject) =>
-          canStartIn(subject, term, flexible) &&
+          canStartIn(subject, term, flexible, options) &&
           subject.prerequisites.every(
             (prerequisiteId) => (finishedAt.get(prerequisiteId) ?? Infinity) < current
           )
@@ -220,6 +245,8 @@ export function autoPlan(
         (first, second) =>
           (weight.get(second.id) ?? 0) - (weight.get(first.id) ?? 0) ||
           first.year - second.year ||
+          Number(isCounterSemester(first, term, flexible)) -
+            Number(isCounterSemester(second, term, flexible)) ||
           first.code - second.code
       )
       .slice(0, pace);

@@ -72,6 +72,12 @@ export function usePlanner() {
   const customNames = useAcademicProgressStore((state) => state.customNames);
   const setEquivalence = useAcademicProgressStore((state) => state.setEquivalence);
   const setCustomName = useAcademicProgressStore((state) => state.setCustomName);
+  const counterSemesterSetting = useAcademicProgressStore((state) => state.counterSemester);
+  const setCounterSemester = useAcademicProgressStore((state) => state.setCounterSemester);
+
+  // Solo vale en las carreras que lo permiten.
+  const canUseCounterSemester = Boolean(career.career.counterSemester);
+  const counterSemester = canUseCounterSemester && counterSemesterSetting;
   const updateSubjectStatus = useAcademicProgressStore((state) => state.updateSubjectStatus);
   const replaceProgress = useAcademicProgressStore((state) => state.replaceProgress);
   const resetProgress = useAcademicProgressStore((state) => state.resetProgress);
@@ -342,7 +348,18 @@ export function usePlanner() {
     grades,
     planned,
     pace,
-    record: { progress, grades, planned, pace, equivalences, customNames },
+    record: {
+      progress,
+      grades,
+      planned,
+      pace,
+      equivalences,
+      customNames,
+      counterSemester: counterSemesterSetting,
+    },
+    canUseCounterSemester,
+    counterSemester,
+    setCounterSemester,
     equivalences,
     customNames,
     setEquivalence,
